@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dvillah Group Limited</title>
+<meta name="theme-color" content="#14183a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--red:#e0242b;--red2:#a3141b;--navy:#14183a;--navy2:#1f2552;--bg:#f4f5fa;--card:#fff;--text:#1a1d33;--muted:#6b7090;--line:#e6e8f3;--ok:#15803d;--warn:#9a6200}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px}
+body{min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px;width:100%;padding:12px 13px;border:1.5px solid #dcdff0;border-radius:12px;background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red)}
+textarea{resize:vertical;min-height:90px}
+label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin:12px 0 6px}
+h1,h2,h3{color:var(--navy);margin:0}
+.wrap{max-width:520px;margin:0 auto;padding:20px 18px 40px}
+.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(20,24,58,.07);margin-bottom:14px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--red),var(--red2));margin-top:14px;text-align:center}
+.btn.navy{background:linear-gradient(135deg,var(--navy2),var(--navy))}
+.btn.ghost{background:transparent;color:var(--navy);border:1.5px solid #dcdff0}
+.btn.sm{display:inline-block;width:auto;padding:9px 14px;font-size:14px;margin:0}
+.btn:disabled{opacity:.55}
+.muted{color:var(--muted);font-size:14px}
+.err{color:#b3141b;font-size:14px;min-height:18px;margin-top:10px}
+.center{text-align:center}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.badge{display:inline-block;font-size:11px;font-weight:800;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.b-ok{background:#d9f5e3;color:var(--ok)}.b-warn{background:#fff1d6;color:var(--warn)}.b-bad{background:#fde1e1;color:#b3141b}.b-navy{background:#e4e7fb;color:var(--navy)}
+.list>*{padding:12px 0;border-top:1px solid var(--line)}.list>*:first-child{border-top:0}
+.empty{text-align:center;color:var(--muted);font-size:14px;padding:22px 0}
+/* splash + welcome */
+#v-splash{position:fixed;inset:0;background:linear-gradient(160deg,#fff,#eef0fa);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;text-align:center;padding:30px}
+#v-splash .lg{animation:pop .9s cubic-bezier(.2,1.3,.4,1) both}
+#v-splash h1{margin-top:14px;font-size:24px;animation:fade .8s .3s both}
+#v-splash p{color:var(--muted);margin:8px 0 0;font-size:14px;animation:fade .8s .6s both}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{text-align:center;padding:30px 10px 10px}
+.hero h1{font-size:26px;margin-top:12px}
+.hero .slogan{color:var(--red);font-weight:700;margin:8px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0}
+.chip{background:#fff;border:1.5px solid var(--line);border-radius:30px;padding:9px 14px;font-weight:700;font-size:14px;color:var(--navy);box-shadow:0 3px 10px rgba(20,24,58,.05)}
+.tabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:12px}
+.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:9px;font-weight:700;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(20,24,58,.1)}
+/* app shell */
+.bar{position:sticky;top:0;z-index:20;background:#fff;display:flex;align-items:center;gap:8px;padding:10px 12px;box-shadow:0 2px 12px rgba(20,24,58,.08)}
+.bar .t{flex:1;font-weight:800;color:var(--navy);font-size:18px}
+.ibtn{border:0;background:transparent;font-size:24px;padding:6px 10px;position:relative;color:var(--navy)}
+.dot{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+#drawerBg{position:fixed;inset:0;background:rgba(10,12,30,.5);z-index:30;opacity:0;pointer-events:none;transition:opacity .25s}
+#drawerBg.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;bottom:0;left:0;width:82%;max-width:320px;background:#fff;z-index:31;transform:translateX(-102%);transition:transform .28s;overflow-y:auto;display:flex;flex-direction:column}
+#drawer.on{transform:none}
+.dhead{padding:22px 18px;background:linear-gradient(150deg,var(--navy),var(--navy2) 60%,#6e1a2c);color:#fff}
+.dhead b{display:block;margin-top:10px;font-size:17px}.dhead span{font-size:12px;opacity:.75}
+.mi{display:flex;align-items:center;gap:14px;width:100%;border:0;background:transparent;text-align:left;padding:14px 20px;font-size:16px;font-weight:600;color:var(--text)}
+.mi .ic{width:26px;text-align:center;font-size:20px}
+.mi.on{background:#fdeeee;color:var(--red);border-left:4px solid var(--red)}
+.mi .badge{margin-left:auto}
+.msep{height:1px;background:var(--line);margin:6px 0}
+#view{padding:16px 16px 50px;max-width:560px;margin:0 auto}
+.h2{font-size:20px;margin:4px 0 12px}
+/* e-card */
+.scene{perspective:1200px;width:100%;max-width:420px;margin:6px auto;aspect-ratio:1.586;cursor:pointer}
+.flip{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.3,.8,.3,1);transform-style:preserve-3d}
+.flip.turned{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:20px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;color:#fff;box-shadow:0 14px 34px rgba(10,12,30,.4)}
+.front{background:radial-gradient(120% 140% at 85% 0%,#3a1020 0,transparent 55%),linear-gradient(150deg,#0b0d1c,#14183a 60%,#1a0c16)}
+.front::before{content:"";position:absolute;right:-40px;top:-30px;width:240px;height:240px;border-radius:50%;background:linear-gradient(135deg,rgba(224,36,43,.35),rgba(224,36,43,0))}
+.front::after{content:"";position:absolute;right:30px;bottom:-90px;width:260px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)}
+.back{transform:rotateY(180deg);background:linear-gradient(150deg,#0b0d1c,#14183a 70%,#1a0c16)}
+.pad{position:relative;z-index:1;height:100%;padding:5% 6%;display:flex;flex-direction:column}
+.ftop{display:flex;justify-content:space-between;align-items:center}
+.ftop .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:clamp(13px,4vw,17px)}
+.ftop .logo svg{width:clamp(26px,8vw,34px);height:clamp(26px,8vw,34px)}
+.prem{font-family:"Brush Script MT","Segoe Script",cursive;font-style:italic;color:#e8b84a;font-size:clamp(17px,5.5vw,24px)}
+.chiprow{display:flex;align-items:center;gap:14px;margin-top:5%}
+.chip2{width:clamp(40px,13vw,54px);height:clamp(30px,10vw,40px);border-radius:8px;background:linear-gradient(135deg,#f3d98b,#b98a2e);position:relative}
+.chip2::before{content:"";position:absolute;inset:25% 0;border-top:1.5px solid rgba(90,60,10,.55);border-bottom:1.5px solid rgba(90,60,10,.55)}
+.chip2::after{content:"";position:absolute;inset:0 38%;border-left:1.5px solid rgba(90,60,10,.55);border-right:1.5px solid rgba(90,60,10,.55)}
+.nfc{width:clamp(24px,8vw,32px);height:clamp(24px,8vw,32px)}
+.cnum{margin-top:auto;font-family:"Courier New",ui-monospace,monospace;font-weight:700;letter-spacing:.14em;font-size:clamp(16px,5.3vw,24px);text-shadow:0 2px 4px rgba(0,0,0,.5);white-space:nowrap}
+.fbot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:3%}
+.fbot small{display:block;font-size:clamp(8px,2.3vw,10px);letter-spacing:1.2px;opacity:.7;text-transform:uppercase}
+.fbot .nm{font-weight:700;font-size:clamp(13px,4.2vw,18px);text-transform:uppercase;max-width:50vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fbot .amt{text-align:right;font-weight:800;font-size:clamp(16px,5.2vw,23px)}
+.glow{animation:glow 1.4s ease-out}
+@keyframes glow{0%{text-shadow:0 0 0 rgba(255,214,102,0);transform:scale(1)}30%{text-shadow:0 0 18px rgba(255,214,102,.95);transform:scale(1.12)}100%{text-shadow:0 0 0 rgba(255,214,102,0);transform:scale(1)}}
+.stripe{height:15%;background:#05060f;margin:7% 0 0}
+.bpad{padding:4% 6%;display:flex;gap:4%;align-items:center;height:70%}
+.bsec{flex:1;font-size:clamp(11px,3.4vw,14px)}
+.bsec .brow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+.bsec .brow.tot{font-weight:800;border-bottom:0;color:#e8b84a}
+.bqr{background:#fff;padding:6px;border-radius:10px;line-height:0}
+.bqr canvas,.bqr img{width:clamp(76px,24vw,104px)!important;height:clamp(76px,24vw,104px)!important}
+.btip{text-align:center;font-size:clamp(8px,2.4vw,10px);opacity:.65;letter-spacing:.5px}
+/* home + sections */
+.story{background:linear-gradient(150deg,var(--navy),var(--navy2) 60%,#6e1a2c);color:#fff;border-radius:20px;padding:22px}
+.story h2{color:#fff;font-size:22px}.story p{line-height:1.55;opacity:.92}
+.big{font-size:32px;font-weight:800;color:var(--navy)}
+.pay{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.pay small{display:block;color:var(--muted)}
+/* grids */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prod{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 5px 16px rgba(20,24,58,.08);display:flex;flex-direction:column}
+.prod .im{aspect-ratio:1;background:#eceefa;display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden}
+.prod .im img{width:100%;height:100%;object-fit:cover}
+.prod .in{padding:10px 11px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.prod .nm{font-weight:700;font-size:14px;line-height:1.25}.prod .pr{font-weight:800;color:var(--red)}
+.stat{background:#fff;border-radius:14px;padding:14px;text-align:center;box-shadow:0 4px 14px rgba(20,24,58,.06)}
+.stat b{display:block;font-size:22px;color:var(--navy)}.stat span{font-size:12px;color:var(--muted)}
+/* chat */
+.chatbox{display:flex;flex-direction:column;height:calc(100vh - 150px);min-height:340px}
+.msgs{flex:1;overflow-y:auto;padding:6px 2px;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-end;max-width:88%}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.bub{padding:10px 13px;border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(20,24,58,.08);font-size:15px;line-height:1.4;word-break:break-word}
+.msg.me .bub{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff}
+.bub img{max-width:100%;border-radius:10px;display:block;margin-bottom:4px}
+.bub small{display:block;font-size:10px;opacity:.6;margin-top:3px}
+.who{font-size:11px;color:var(--muted);margin:0 0 2px 2px}
+.compose{display:flex;gap:8px;margin-top:10px;align-items:center}
+.compose input[type=text]{flex:1}
+.compose .ibtn{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(20,24,58,.1);font-size:22px;padding:9px 12px}
+.av{width:38px;height:38px;flex:none;border-radius:50%;overflow:hidden;background:#e9ebfa}
+.av svg{width:100%;height:100%;animation:bob 3s ease-in-out infinite}
+.av .eye{animation:blink 4.2s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+/* admin sheet */
+.sheetwrap{overflow-x:auto;background:#fff;border-radius:14px;box-shadow:0 5px 16px rgba(20,24,58,.08)}
+table.sheet{border-collapse:collapse;min-width:640px;width:100%;font-size:14px}
+.sheet th{background:var(--navy);color:#fff;text-align:left;padding:10px 8px;font-size:12px;letter-spacing:.5px;white-space:nowrap}
+.sheet td{border:1px solid var(--line);padding:0}
+.sheet td.v{padding:9px 8px}
+.sheet td input,.sheet td select{border:0;border-radius:0;padding:10px 8px;font-size:14px;background:transparent}
+.sheet tr.newrow td{background:#fff7e0}
+.sheet tr.r:active{background:#fdeeee}
+.pick{position:fixed;z-index:60;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(10,12,30,.3);max-height:230px;overflow-y:auto}
+.pick div{padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}.pick small{color:var(--muted)}
+/* modal, toast */
+.modal{position:fixed;inset:0;background:rgba(10,12,30,.55);z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.sheetm{background:#fff;width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px 26px;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:30px;font-size:14px;font-weight:600;z-index:90;opacity:0;transition:.3s;pointer-events:none;max-width:88vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#reader{width:100%;border-radius:14px;overflow:hidden}
+.pm{font-size:12px;color:var(--muted)}
+.steps li{margin:6px 0}
+
+</style></head><body>
+<div id="v-splash">
+  <div class="lg" id="splashLogo"></div>
+  <h1>Dvillah Group Limited</h1>
+  <p>Empowering lives and building sustainable future.</p>
+</div>
+
+<div id="v-welcome" class="hidden">
+  <div class="wrap">
+    <div class="hero">
+      <div id="welcomeLogo"></div>
+      <h1>Dvillah Group Limited</h1>
+      <p class="slogan">Empowering lives and building sustainable future.</p>
+    </div>
+    <div class="card center" style="margin-top:16px">
+      <h3>Looking for something?</h3>
+      <p class="muted" style="margin:6px 0 0">Dvillah has got you. 💪</p>
+      <div class="chips">
+        <span class="chip">💰 Savings</span><span class="chip">🤝 Contribution</span><span class="chip">🍚 Food supply</span><span class="chip">🏦 Loans</span><span class="chip">🛒 Mart</span>
+      </div>
+    </div>
+    <button class="btn" id="wLogin" type="button">Log in</button>
+    <button class="btn ghost" id="wSignup" type="button">Create account</button>
+  </div>
+</div>
+
+<div id="v-auth" class="hidden">
+  <div class="wrap">
+    <div class="hero" style="padding-top:10px"><div id="authLogo"></div><h1 style="font-size:22px">Dvillah Group Limited</h1></div>
+    <div class="card" style="margin-top:14px">
+      <div class="tabs"><button id="tLogin" class="on" type="button">Log in</button><button id="tSignup" type="button">Sign up</button></div>
+      <form id="authForm" autocomplete="on">
+        <div id="nameWrap" class="hidden"><label for="aName">Full name</label><input id="aName" type="text" autocomplete="name" placeholder="e.g. James Dike"></div>
+        <label for="aPhone" id="phoneLbl" class="hidden">Phone number</label><input id="aPhone" type="tel" autocomplete="tel" placeholder="e.g. 0803 000 0000" class="hidden">
+        <label for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+        <label for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password" placeholder="At least 6 characters" required>
+        <div id="aErr" class="err"></div>
+        <button id="aSubmit" class="btn" type="submit">Log in</button>
+      </form>
+      <button id="aForgot" class="btn ghost" type="button" style="margin-top:10px">Forgot password?</button>
+    </div>
+    <button class="btn ghost" id="aBack" type="button">← Back</button>
+  </div>
+</div>
+
+<div id="v-pending" class="hidden">
+  <div class="wrap center">
+    <div class="card" style="margin-top:70px">
+      <div style="font-size:54px">⏳</div>
+      <h2>Pending verification</h2>
+      <p class="muted" style="line-height:1.5">Thank you for signing up! An admin will verify your membership soon. Your e-card and the rest of the app will open here once you are verified.</p>
+      <button class="btn ghost" id="pLogout" type="button">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div id="v-adminverify" class="hidden">
+  <div class="wrap center">
+    <div class="card" style="margin-top:60px">
+      <div style="font-size:50px">📧</div>
+      <h2>Verify your admin email</h2>
+      <p class="muted" style="line-height:1.5">For safety, admin accounts must confirm their email. We sent a link to <b id="avEmail"></b>. Open it, then come back and tap the button below.</p>
+      <button class="btn" id="avDone" type="button">I have verified</button>
+      <button class="btn ghost" id="avResend" type="button">Send the email again</button>
+      <button class="btn ghost" id="avOut" type="button">Log out</button>
+      <div id="avMsg" class="err"></div>
+    </div>
+  </div>
+</div>
+
+<div id="v-app" class="hidden">
+  <header class="bar">
+    <button class="ibtn" id="menuBtn" type="button" aria-label="Menu">☰</button>
+    <div class="t" id="barTitle">Dvillah</div>
+    <button class="ibtn" id="bellBtn" type="button" aria-label="Notifications">🔔<span class="dot hidden" id="bellDot">0</span></button>
+  </header>
+  <div id="drawerBg"></div>
+  <nav id="drawer"></nav>
+  <main id="view"></main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendEmailVerification,sendPasswordResetEmail,updateProfile} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,orderBy,onSnapshot,writeBatch,increment} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAP1GyZ5FPyNtCYexSDZ8bI8bMNEy8BI-0",
+  authDomain: "dvillah-group.firebaseapp.com",
+  projectId: "dvillah-group",
+  storageBucket: "dvillah-group.firebasestorage.app",
+  messagingSenderId: "144588835039",
+  appId: "1:144588835039:web:9f42cc830f6dfd818d416a"
+};
+// Admin emails (must also be in firestore.rules)
+const ADMINS = ["pixelgroup677@gmail.com", "dvillahgroup@gmail.com"];
+const LOAN_FEE_BIG = 18000, LOAN_BIG_FROM = 50000;
+const SECTIONS = {Savings:"savings", Contribution:"contribution", Food:"food"};
+const SEC_LABEL = {savings:"Savings", contribution:"Contribution", food:"Food supply"};
+const SEC_ICON = {savings:"💰", contribution:"🤝", food:"🍚"};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => "₦" + Math.round(Number(n)||0).toLocaleString("en-US");
+const isAdminEmail = e => ADMINS.includes(String(e||"").toLowerCase());
+const num = v => { const n = Number(String(v).replace(/,/g,"")); return isFinite(n) ? n : 0; };
+const fdate = d => { if(!d) return "—"; const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d); return m ? `${m[3]}/${m[2]}/${m[1]}` : d; };
+const ftime = ts => { const d = new Date(ts||0); return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}) + " " + d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); };
+const rnd = (n, set) => Array.from({length:n}, () => set[Math.floor(Math.random()*set.length)]).join("");
+const newShortId = () => "DV" + rnd(4, "ABCDEFGHJKMNPQRSTUVWXYZ23456789");
+const newCardNumber = () => "8" + rnd(15, "0123456789");
+const newQr = () => "DV-" + rnd(32, "0123456789abcdef");
+const fmtCard = n => String(n||"").replace(/(\d{4})(?=\d)/g, "$1 ");
+const sum = a => a.reduce((x, y) => x + (Number(y)||0), 0);
+const total = b => b ? sum([b.savings, b.contribution, b.food]) : 0;
+
+const S = {user:null, me:null, admin:false, page:null, params:{}, data:{}, unsubs:{}, settings:{}, creating:false};
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("on"),2600); }
+
+function logoImg(size){ return `<img src="icon-192.png" width="${size}" height="${size}" alt="Dvillah" style="border-radius:${Math.round(size*.22)}px;display:block;margin:0 auto">`; }
+function logoSvg(){ return `<svg viewBox="0 0 40 40"><defs><linearGradient id="lgx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0242b"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M6 4h14a16 16 0 0 1 0 32H6z" fill="url(#lgx)"/><path d="M12 14q4-3 8 0t8 0M12 22q4-3 8 0t8 0" stroke="#14183a" stroke-width="2.4" fill="none"/></svg>`; }
+
+function avatar(kind){
+  const female = kind === "f";
+  const hair = female
+    ? `<path d="M10 24c-2-14 6-18 14-18s16 4 14 18c-1 6-3 8-4 8V22c0-6-4-9-10-9s-10 3-10 9v10c-1 0-3-2-4-8z" fill="#2b1b17"/>`
+    : `<path d="M11 21c-1-10 5-14 13-14s14 4 13 14c-3-5-7-7-13-7s-10 2-13 7z" fill="#2b1b17"/>`;
+  return `<svg viewBox="0 0 48 48"><rect width="48" height="48" fill="#dfe3fb"/><path d="M6 48c2-10 10-13 18-13s16 3 18 13z" fill="#14183a"/>${female?hair:""}<circle cx="24" cy="23" r="10.5" fill="#e2a37a"/>${female?"":hair}<ellipse class="eye" cx="20" cy="23.5" rx="1.4" ry="1.7" fill="#1a1d33"/><ellipse class="eye" cx="28" cy="23.5" rx="1.4" ry="1.7" fill="#1a1d33"/><path d="M20 28q4 3.2 8 0" stroke="#8a3b2c" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
+}
+const adminAv = () => `<div class="av">${avatar(S.settings.adminAvatar || "m")}</div>`;
+
+function loadScript(src){
+  return new Promise((res, rej) => {
+    if(loadScript.c[src]) return loadScript.c[src].then(res, rej);
+    loadScript.c[src] = new Promise((r2, j2) => { const s=document.createElement("script"); s.src=src; s.onload=r2; s.onerror=()=>j2(new Error("load")); document.head.appendChild(s); });
+    loadScript.c[src].then(res, rej);
+  });
+}
+loadScript.c = {};
+
+function resizeImage(file, max=700, q=.72){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = () => rej(new Error("read"));
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => rej(new Error("img"));
+      img.onload = () => {
+        const k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.max(1, Math.round(img.width*k)); c.height = Math.max(1, Math.round(img.height*k));
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", q));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+/* ---------- modal / overlays ---------- */
+function modal(html, mount){
+  const root = $("#modalRoot");
+  const m = document.createElement("div");
+  m.className = "modal";
+  m.innerHTML = `<div class="sheetm">${html}</div>`;
+  m.addEventListener("pointerdown", e => { if(e.target === m) close(); });
+  root.appendChild(m);
+  const close = () => { m.remove(); };
+  m.close = close;
+  if(mount) mount($(".sheetm", m), close);
+  return close;
+}
+const closeAllModals = () => { const had = $$("#modalRoot .modal").length > 0; $$("#modalRoot .modal").forEach(m => m.remove()); return had; };
+function confirmBox(text, yes, onYes){
+  modal(`<h3>${esc(text)}</h3><div class="row" style="margin-top:6px"><button class="btn ghost" data-x="no">Cancel</button><button class="btn" data-x="yes">${esc(yes)}</button></div>`, (b, close) => {
+    $('[data-x="no"]', b).onclick = close;
+    $('[data-x="yes"]', b).onclick = () => { close(); onYes(); };
+  });
+}
+
+/* ---------- member picker (type a few letters) ---------- */
+function attachPicker(input, getItems, onPick){
+  let box = null;
+  const hide = () => { if(box){ box.remove(); box = null; } };
+  const show = () => {
+    const q = input.value.trim().toLowerCase();
+    const items = getItems().filter(u => !q || (u.name||"").toLowerCase().includes(q) || (u.shortId||"").toLowerCase().includes(q)).slice(0, 30);
+    hide();
+    if(!items.length) return;
+    box = document.createElement("div");
+    box.className = "pick";
+    const r = input.getBoundingClientRect();
+    box.style.left = r.left + "px"; box.style.top = (r.bottom + 4) + "px"; box.style.width = Math.max(r.width, 220) + "px";
+    box.innerHTML = items.map(u => `<div data-u="${esc(u.uid)}">${esc(u.name)} <small>${esc(u.shortId)}</small></div>`).join("");
+    box.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      const d = e.target.closest("[data-u]"); if(!d) return;
+      const u = getItems().find(x => x.uid === d.dataset.u);
+      input.value = u.name; input.dataset.uid = u.uid; hide(); onPick && onPick(u);
+    });
+    document.body.appendChild(box);
+  };
+  input.addEventListener("input", () => { input.dataset.uid = ""; show(); onPick && onPick(null); });
+  input.addEventListener("focus", show);
+  input.addEventListener("blur", () => setTimeout(hide, 150));
+}
+
+/* ---------- live listeners ---------- */
+function listen(key, q, mapper){
+  if(S.unsubs[key]) S.unsubs[key]();
+  S.unsubs[key] = onSnapshot(q, snap => {
+    if(mapper) S.data[key] = mapper(snap);
+    else S.data[key] = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    refresh(key);
+  }, err => console.warn("listen", key, err && err.code));
+}
+function stopAll(){
+  Object.values(S.unsubs).forEach(u => { try{u();}catch(e){} });
+  S.unsubs = {}; S.data = {}; S.me = null; S.page = null; S.admin = false;
+}
+const D = k => S.data[k] || [];
+const byNew = (a, b) => (b.createdAt||0) - (a.createdAt||0);
+
+function refresh(key){
+  if(!$("#v-app").classList.contains("hidden")){
+    updateBadges();
+    const p = PAGES[S.page];
+    if(p){
+      if(p.update) p.update(key);
+      else if((p.keys||[]).includes(key)) renderPage();
+    }
+    if(key === "settings") buildDrawer();
+  }
+}
+
+/* ---------- screens ---------- */
+const SCREENS = ["v-splash","v-welcome","v-auth","v-pending","v-adminverify","v-app"];
+function show(id){
+  SCREENS.forEach(s => $("#"+s).classList.toggle("hidden", s !== id));
+  window.scrollTo(0, 0);
+}
+
+/* ---------- navigation ---------- */
+const PAGES = {};
+function go(name, params={}, push=true){
+  closeAllModals(); closeDrawer();
+  if(PAGES[name] && PAGES[name].leave) PAGES[name].leave();
+  if(S.page && PAGES[S.page] && PAGES[S.page].leave) PAGES[S.page].leave();
+  S.page = name; S.params = params;
+  if(push) history.pushState({name, params}, "");
+  renderPage();
+  buildDrawer();
+  window.scrollTo(0, 0);
+}
+function renderPage(){
+  const p = PAGES[S.page]; if(!p) return;
+  $("#barTitle").textContent = typeof p.title === "function" ? p.title() : p.title;
+  const v = $("#view");
+  v.innerHTML = p.render();
+  if(p.mount) p.mount(v);
+}
+window.addEventListener("popstate", e => {
+  if(!$("#v-app").classList.contains("hidden")){
+    const had = closeAllModals() | closeDrawer();
+    if(had){ history.pushState(history.state, ""); return; }
+    const st = e.state;
+    if(st && st.name && PAGES[st.name]){ S.page = st.name; S.params = st.params||{}; renderPage(); buildDrawer(); }
+  }
+});
+
+function openDrawer(){ $("#drawer").classList.add("on"); $("#drawerBg").classList.add("on"); }
+function closeDrawer(){ const had = $("#drawer").classList.contains("on"); $("#drawer").classList.remove("on"); $("#drawerBg").classList.remove("on"); return had ? 1 : 0; }
+
+function menuItems(){
+  if(S.admin) return [
+    ["dash","📊","Dashboard"],["sheet","🧾","Sheet"],["members","👥","Members"],["groups","🤝","Contribution groups"],
+    ["loans","🏦","Loans"],["mart","🛒","Mart"],["inbox","💬","Chats"],["news","📢","Announcements"],["scan","📷","Scan e-card"],["settings","⚙️","Settings"]];
+  return [
+    ["home","🏠","Home"],["ecard","💳","E-card"],["savings","💰","Savings"],["contribution","🤝","Contribution"],["food","🍚","Food supply"],
+    ["loan","🏦","Loan"],["mart","🛒","Mart"],["news","📢","Announcements"],["chat","💬","Chat with Dvillah Admin"],
+    ["history","🧾","Payment history"],["notes","🔔","Notifications"],["profile","👤","Profile"]];
+}
+function badgeFor(k){
+  let n = 0;
+  if(S.admin){
+    if(k==="members") n = D("users").filter(u => u.status !== "verified").length;
+    if(k==="loans") n = D("loans").filter(l => l.status === "pending").length;
+    if(k==="mart") n = D("orders").filter(o => o.status === "new").length;
+    if(k==="inbox") n = sum(D("chats").map(c => c.unreadAdmin));
+  } else {
+    if(k==="notes") n = D("notes").filter(x => !x.read).length;
+    if(k==="chat") n = (S.data.chatDoc && S.data.chatDoc.unreadMember) || 0;
+    if(k==="news"){ const seen = Number(localStorage.getItem("dv_ann_"+(S.user&&S.user.uid))||0); n = D("news").filter(a => (a.createdAt||0) > seen).length; }
+  }
+  return n;
+}
+function buildDrawer(){
+  const name = S.admin ? "Dvillah Admin" : (S.me && S.me.name) || "";
+  const sub = S.admin ? (S.user && S.user.email) : (S.me ? "Member ID: " + S.me.shortId : "");
+  $("#drawer").innerHTML = `<div class="dhead">${logoImg(46).replace('margin:0 auto','margin:0')}<b>${esc(name)}</b><span>${esc(sub)}</span></div>
+    <div style="padding:8px 0;flex:1">${menuItems().map(([k,ic,t]) => { const n = badgeFor(k); return `<button class="mi ${S.page===k?"on":""}" data-go="${k}"><span class="ic">${ic}</span>${esc(t)}${n?`<span class="badge b-bad">${n}</span>`:""}</button>`; }).join("")}
+    <div class="msep"></div><button class="mi" id="menuOut"><span class="ic">🚪</span>Log out</button></div>`;
+  $$("#drawer [data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
+  $("#menuOut").onclick = () => doLogout();
+}
+function updateBadges(){
+  let n = 0;
+  if(S.admin) n = badgeFor("members") + badgeFor("loans") + badgeFor("mart") + badgeFor("inbox");
+  else n = badgeFor("notes");
+  const d = $("#bellDot"); d.textContent = n; d.classList.toggle("hidden", !n);
+  buildDrawer();
+}
+$("#menuBtn").onclick = openDrawer;
+$("#drawerBg").onclick = closeDrawer;
+$("#bellBtn").onclick = () => go(S.admin ? "dash" : "notes");
+
+/* ---------- auth ---------- */
+let authMode = "login";
+function setAuthMode(m){
+  authMode = m;
+  $("#tLogin").classList.toggle("on", m==="login"); $("#tSignup").classList.toggle("on", m==="signup");
+  ["nameWrap","phoneLbl","aPhone"].forEach(i => $("#"+i).classList.toggle("hidden", m!=="signup"));
+  $("#aSubmit").textContent = m==="login" ? "Log in" : "Create account";
+  $("#aPass").autocomplete = m==="login" ? "current-password" : "new-password";
+  $("#aForgot").classList.toggle("hidden", m!=="login");
+  $("#aErr").textContent = "";
+}
+function friendly(e){
+  const c = (e && e.code) || "";
+  if(/invalid-email/.test(c)) return "That email does not look right.";
+  if(/email-already/.test(c)) return "This email already has an account. Try logging in.";
+  if(/weak-password/.test(c)) return "Password must be at least 6 characters.";
+  if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return "Wrong email or password.";
+  if(/network/.test(c)) return "No internet. Please check your connection.";
+  if(/too-many/.test(c)) return "Too many tries. Please wait a bit and try again.";
+  return "Something went wrong. Please try again.";
+}
+$("#wLogin").onclick = () => { setAuthMode("login"); show("v-auth"); };
+$("#wSignup").onclick = () => { setAuthMode("signup"); show("v-auth"); };
+$("#aBack").onclick = () => show("v-welcome");
+$("#tLogin").onclick = () => setAuthMode("login");
+$("#tSignup").onclick = () => setAuthMode("signup");
+$("#aForgot").onclick = async () => {
+  const em = $("#aEmail").value.trim();
+  if(!em){ $("#aErr").textContent = "Type your email first, then tap Forgot password."; return; }
+  try{ await sendPasswordResetEmail(auth, em); $("#aErr").style.color = "#15803d"; $("#aErr").textContent = "Reset link sent. Check your email. 📧"; }
+  catch(e){ $("#aErr").style.color = ""; $("#aErr").textContent = friendly(e); }
+};
+$("#authForm").onsubmit = async ev => {
+  ev.preventDefault();
+  const err = $("#aErr"); err.style.color = ""; err.textContent = "";
+  const email = $("#aEmail").value.trim(), pass = $("#aPass").value;
+  const btn = $("#aSubmit"); btn.disabled = true;
+  try{
+    if(authMode === "signup"){
+      const name = $("#aName").value.trim(), phone = $("#aPhone").value.trim();
+      if(name.length < 2){ err.textContent = "Please type your full name."; btn.disabled = false; return; }
+      if(phone.length < 7){ err.textContent = "Please type your phone number."; btn.disabled = false; return; }
+      S.creating = true;
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      try{ await updateProfile(cred.user, {displayName:name}); }catch(e){}
+      if(isAdminEmail(email)){
+        try{ await sendEmailVerification(cred.user); }catch(e){}
+      } else {
+        await setDoc(doc(db, "users", cred.user.uid), {
+          uid:cred.user.uid, name, phone, email:email.toLowerCase(), shortId:newShortId(), cardNumber:newCardNumber(), qrCode:newQr(),
+          status:"pending", balances:{savings:0, contribution:0, food:0}, createdAt:Date.now()
+        });
+      }
+      S.creating = false;
+      S.nameHint = name;
+      route(auth.currentUser);
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  }catch(e){ S.creating = false; err.textContent = friendly(e); }
+  btn.disabled = false;
+};
+async function doLogout(){ closeDrawer(); stopAll(); try{ await signOut(auth); }catch(e){} show("v-welcome"); }
+$("#pLogout").onclick = doLogout;
+$("#avOut").onclick = doLogout;
+$("#avResend").onclick = async () => { try{ await sendEmailVerification(auth.currentUser); $("#avMsg").style.color="#15803d"; $("#avMsg").textContent="Sent! Check your email. 📧"; }catch(e){ $("#avMsg").style.color=""; $("#avMsg").textContent="Please wait a minute and try again."; } };
+$("#avDone").onclick = async () => {
+  try{ await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); }catch(e){}
+  if(auth.currentUser && auth.currentUser.emailVerified) route(auth.currentUser);
+  else { $("#avMsg").style.color=""; $("#avMsg").textContent = "Not verified yet. Open the link in your email first."; }
+};
+
+/* ---------- routing after login ---------- */
+let routedFor = null;
+function route(user){
+  if(!user){ stopAll(); routedFor = null; show("v-welcome"); return; }
+  S.user = user;
+  if(isAdminEmail(user.email)){
+    if(!user.emailVerified){ stopAll(); $("#avEmail").textContent = user.email; show("v-adminverify"); return; }
+    if(routedFor === user.uid + ":a") return;
+    routedFor = user.uid + ":a";
+    startAdmin();
+  } else {
+    if(routedFor === user.uid + ":m") return;
+    routedFor = user.uid + ":m";
+    startMember();
+  }
+}
+function startMember(){
+  stopAll();
+  S.admin = false;
+  const uid = S.user.uid;
+  let first = true;
+  onSnapshotUser(uid, first);
+  listen("settings", doc(db, "settings", "pay"), s => (S.settings = s.exists() ? s.data() : {}, [S.settings]));
+}
+function onSnapshotUser(uid){
+  if(S.unsubs.me) S.unsubs.me();
+  let shown = false;
+  S.unsubs.me = onSnapshot(doc(db, "users", uid), async snap => {
+    if(!snap.exists()){
+      if(S.creating) return;
+      try{
+        await setDoc(doc(db, "users", uid), {uid, name:S.user.displayName||S.nameHint||"Member", phone:"", email:(S.user.email||"").toLowerCase(), shortId:newShortId(), cardNumber:newCardNumber(), qrCode:newQr(), status:"pending", balances:{savings:0,contribution:0,food:0}, createdAt:Date.now()});
+      }catch(e){}
+      return;
+    }
+    const prev = S.me;
+    S.me = snap.data();
+    if(S.me.status !== "verified"){
+      if(shown){ stopMemberData(); shown = false; }
+      show("v-pending"); return;
+    }
+    if(!shown){
+      shown = true;
+      startMemberData(uid);
+      show("v-app");
+      history.replaceState({name:"home", params:{}}, "");
+      S.page = null; go("home", {}, false);
+    } else {
+      refresh("me");
+    }
+  }, e => console.warn("me", e && e.code));
+}
+function stopMemberData(){ ["payments","groups","loans","orders","products","news","notes","chatDoc","msgs"].forEach(k => { if(S.unsubs[k]){ S.unsubs[k](); delete S.unsubs[k]; } }); }
+function startMemberData(uid){
+  listen("payments", query(collection(db,"payments"), where("uid","==",uid)));
+  listen("groups", query(collection(db,"groups"), where("memberUids","array-contains",uid)));
+  listen("loans", query(collection(db,"loans"), where("uid","==",uid)));
+  listen("orders", query(collection(db,"orders"), where("uid","==",uid)));
+  listen("products", collection(db,"products"));
+  listen("news", collection(db,"announcements"));
+  listen("notes", query(collection(db,"notifications"), where("uid","==",uid)));
+  listen("chatDoc", doc(db,"chats",uid), s => (S.data.chatDoc = s.exists() ? s.data() : {}, S.data.chatDoc));
+  listen("msgs", query(collection(db,"chats",uid,"messages"), orderBy("at")));
+}
+function startAdmin(){
+  stopAll();
+  S.admin = true;
+  listen("settings", doc(db,"settings","pay"), s => (S.settings = s.exists() ? s.data() : {}, [S.settings]));
+  listen("users", collection(db,"users"));
+  listen("payments", collection(db,"payments"));
+  listen("groups", collection(db,"groups"));
+  listen("loans", collection(db,"loans"));
+  listen("orders", collection(db,"orders"));
+  listen("products", collection(db,"products"));
+  listen("news", collection(db,"announcements"));
+  listen("chats", collection(db,"chats"));
+  show("v-app");
+  history.replaceState({name:"dash", params:{}}, "");
+  S.page = null; go("dash", {}, false);
+}
+
+/* ---------- boot ---------- */
+function bootLogos(){ ["splashLogo","welcomeLogo","authLogo"].forEach((id,i) => $("#"+id).innerHTML = logoImg(i===0?120:i===1?96:64)); }
+bootLogos();
+let splashDone = false, pendingUser;
+const splashTimer = new Promise(r => setTimeout(r, 1800));
+onAuthStateChanged(auth, async user => {
+  pendingUser = user || null;
+  await splashTimer;
+  splashDone = true;
+  if(user) route(user);
+  else { routedFor = null; if(!$("#v-auth").classList.contains("hidden") && S.creating) return; stopAll(); show("v-welcome"); }
+});
+if("serviceWorker" in navigator){ window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+
+/* ================= MEMBER PAGES ================= */
+const payInfo = () => {
+  const s = S.settings || {};
+  if(!s.accountNumber) return `<div class="card"><b>🏦 How to pay</b><p class="muted" style="margin:6px 0 0">Pay in cash at the Dvillah office or by bank transfer. Message Dvillah Admin in Chat for the account details.</p></div>`;
+  return `<div class="card"><b>🏦 How to pay</b><p class="muted" style="margin:6px 0 8px">Pay in cash or transfer to the company account. The admin will record it and it will show here.</p>
+    <div class="pay"><span><small>Bank</small>${esc(s.bank)}</span><span><small>Account name</small>${esc(s.accountName)}</span><span><small>Account number</small><b>${esc(s.accountNumber)}</b></span></div></div>`;
+};
+const payRow = p => `<div class="between"><div><b>${esc(p.desc)}</b><div class="pm">${fdate(p.date)}${p.amount && p.amount !== p.tAmount ? " · daily " + fmt(p.amount) : ""}</div></div><b style="color:var(--ok)">+${fmt(p.tAmount)}</b></div>`;
+const myPays = () => D("payments").slice().sort((a,b) => (b.date||"").localeCompare(a.date||"") || byNew(a,b));
+
+function countUp(el, to, from=0, ms=1100){
+  const t0 = performance.now();
+  const step = t => { const k = Math.min(1,(t-t0)/ms), e = 1-Math.pow(1-k,3); el.textContent = fmt(from + (to-from)*e); if(k<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+PAGES.home = {
+  title: "Home", keys: ["me","payments","news"],
+  render(){
+    const m = S.me || {}, b = m.balances || {};
+    const last = D("news").slice().sort(byNew)[0];
+    return `<div class="story"><h2>Welcome, ${esc((m.name||"").split(" ")[0])} 👋</h2>
+      <p>Since 2022, Dvillah has been helping people save, grow and get what they need, one small step at a time.</p>
+      <p style="margin-bottom:0">💰 Savings · 🤝 Contribution · 🍚 Food supply · 🏦 Loans · 🛒 Mart</p></div>
+      <div class="card" style="margin-top:14px"><div class="muted">Your total in Dvillah</div><div class="big">${fmt(total(b))}</div>
+      <div class="row" style="margin-top:10px">${["savings","contribution","food"].map(k => `<div class="stat"><b style="font-size:15px">${fmt(b[k])}</b><span>${SEC_ICON[k]} ${SEC_LABEL[k]}</span></div>`).join("")}</div>
+      <button class="btn navy" data-go="ecard">💳 Open my e-card</button></div>
+      ${last ? `<div class="card"><b>📢 Latest from Dvillah</b><p style="margin:8px 0 0;white-space:pre-wrap">${esc(last.text)}</p><div class="pm">${ftime(last.createdAt)}</div></div>` : ""}`;
+  },
+  mount(v){ $$("[data-go]", v).forEach(b => b.onclick = () => go(b.dataset.go)); }
+};
+
+PAGES.ecard = {
+  title: "E-card", keys: [],
+  render(){
+    const m = S.me || {};
+    return `<div class="scene" id="scene"><div class="flip" id="flip">
+      <div class="face front"><div class="pad">
+        <div class="ftop"><div class="logo">${logoSvg()}Dvillah</div><div class="prem">premium</div></div>
+        <div class="chiprow"><div class="chip2"></div>
+          <svg class="nfc" viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".85"><path d="M10 9c3 4 3 10 0 14"/><path d="M15 6c5 6 5 14 0 20"/><path d="M20 3c7 8 7 18 0 26"/></svg></div>
+        <div class="cnum">${esc(fmtCard(m.cardNumber))}</div>
+        <div class="fbot"><div><small>Member</small><div class="nm">${esc(m.name)}</div></div><div><small style="text-align:right">Total in Dvillah</small><div class="amt" id="cardTotal">${fmt(0)}</div></div></div>
+      </div></div>
+      <div class="face back"><div class="stripe"></div><div class="bpad">
+        <div class="bsec">
+          <div class="brow"><span>💰 Savings</span><b id="bSav">${fmt(0)}</b></div>
+          <div class="brow"><span>🤝 Contribution</span><b id="bCon">${fmt(0)}</b></div>
+          <div class="brow"><span>🍚 Food supply</span><b id="bFood">${fmt(0)}</b></div>
+          <div class="brow tot"><span>Total</span><b id="bTot">${fmt(0)}</b></div></div>
+        <div class="bqr" id="qrBox"></div></div>
+        <div class="btip">Show this code to a Dvillah admin · tap to flip</div></div>
+    </div></div>
+    <p class="muted center" style="margin-top:14px">Tap the card to flip it 🔄</p>
+    <div class="card"><div class="between"><span class="muted">Member ID</span><b>${esc(m.shortId)}</b></div></div>`;
+  },
+  mount(v){
+    S.cardShown = 0;
+    $("#scene").onclick = () => $("#flip").classList.toggle("turned");
+    let sx = null;
+    $("#scene").addEventListener("touchstart", e => sx = e.touches[0].clientX, {passive:true});
+    $("#scene").addEventListener("touchend", e => { if(sx!=null && Math.abs(e.changedTouches[0].clientX - sx) > 40){ $("#flip").classList.toggle("turned"); e.preventDefault(); } sx = null; });
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js").then(() => {
+      const box = $("#qrBox"); if(box && !box.firstChild) new QRCode(box, {text:S.me.qrCode, width:104, height:104, correctLevel:QRCode.CorrectLevel.M});
+    }).catch(() => {});
+    PAGES.ecard.fill(true);
+  },
+  fill(first){
+    const b = S.me.balances || {}, t = total(b), el = $("#cardTotal");
+    if(!el) return;
+    if(first) countUp(el, t); else if(t !== S.cardShown){ countUp(el, t, S.cardShown, 900); if(t > S.cardShown){ el.classList.remove("glow"); void el.offsetWidth; el.classList.add("glow"); } }
+    S.cardShown = t;
+    $("#bSav").textContent = fmt(b.savings); $("#bCon").textContent = fmt(b.contribution); $("#bFood").textContent = fmt(b.food); $("#bTot").textContent = fmt(t);
+  },
+  update(k){ if(k === "me") PAGES.ecard.fill(false); }
+};
+
+function sectionPage(key, extra){
+  return {
+    title: SEC_LABEL[key], keys: ["me","payments","groups"],
+    render(){
+      const b = (S.me && S.me.balances) || {};
+      const rows = myPays().filter(p => p.desc.toLowerCase() === (key==="food"?"food":key));
+      return `<div class="card center"><div class="muted">${SEC_ICON[key]} Your ${SEC_LABEL[key].toLowerCase()} balance</div><div class="big">${fmt(b[key])}</div>${b[key] ? "" : '<div class="muted">Nothing here yet.</div>'}</div>
+        ${extra ? extra() : ""}
+        ${payInfo()}
+        <h3 class="h2">Payments</h3><div class="card"><div class="list">${rows.length ? rows.map(payRow).join("") : '<div class="empty">No payments recorded yet.</div>'}</div></div>`;
+    }
+  };
+}
+PAGES.savings = sectionPage("savings", () => `<div class="card"><b>How savings work</b><p class="muted" style="margin:6px 0 0">Pay any amount in cash or by transfer. When the admin records it, it shows here and on your e-card. 💪</p></div>`);
+PAGES.food = sectionPage("food", () => `<div class="card"><b>🍚 Food supply packages</b><p class="muted" style="margin:6px 0 10px">Pay ${fmt(1000)} a day and get your food supply.</p>
+  <div class="list">${[["1 month","about "+fmt(30000)],["3 months","about "+fmt(90000)],["6 months","about "+fmt(180000)]].map(([a,b]) => `<div class="between"><b>${a}</b><span class="muted">${b}</span></div>`).join("")}</div>
+  <p class="muted" style="margin:10px 0 0">The food list is coming soon. 🛒</p></div>`);
+
+function daysLeft(g){
+  const n = Number(g.cycleDays) || (g.members||[]).length || 1;
+  const ref = g.lastPayoutAt || g.startAt || Date.now();
+  return Math.max(0, Math.ceil((ref + n*86400000 - Date.now()) / 86400000));
+}
+function groupState(g){
+  const col = g.collected || [];
+  const nextUid = (g.members||[]).map(m => m.uid).find(u => !col.includes(u));
+  return {col, nextUid, done: !nextUid};
+}
+function groupCard(g, uid){
+  const {col, nextUid, done} = groupState(g);
+  const mine = sum(D("payments").filter(p => p.groupId === g.id && p.uid === uid).map(p => p.tAmount));
+  return `<div class="card"><div class="between"><h3>${esc(g.name)}</h3><span class="badge b-navy">${fmt(g.daily)} / day</span></div>
+    <div class="row" style="margin:12px 0"><div class="stat"><b style="font-size:17px">${fmt(mine)}</b><span>You paid in</span></div>
+    <div class="stat"><b style="font-size:17px">${done ? "—" : daysLeft(g)}</b><span>${done ? "Round done" : "Days to next payout"}</span></div></div>
+    <div class="list">${(g.members||[]).map((m,i) => {
+      const st = col.includes(m.uid) ? '<span class="badge b-ok">Collected ✅</span>' : m.uid === nextUid ? '<span class="badge b-warn">Next 👉</span>' : '<span class="badge b-navy">Waiting ⏳</span>';
+      return `<div class="between"><span>${i+1}. ${esc(m.name)} <span class="pm">${esc(m.shortId)}${m.uid===uid?" · you":""}</span></span>${st}</div>`;
+    }).join("")}</div></div>`;
+}
+PAGES.contribution = sectionPage("contribution", () => {
+  const gs = D("groups");
+  return `<h3 class="h2">My groups</h3>${gs.length ? gs.map(g => groupCard(g, S.user.uid)).join("") : '<div class="card empty">You are not in a group yet. An admin adds you to a contribution group. 🤝</div>'}`;
+});
+
+PAGES.loan = {
+  title: "Loan", keys: ["loans","me"],
+  render(){
+    const ls = D("loans").slice().sort(byNew);
+    const bad = {pending:"b-warn", approved:"b-ok", rejected:"b-bad"};
+    return `<div class="card"><b>🏦 Loans</b><p class="muted" style="margin:6px 0 0">Request here or come in person to the office. Before you start, note the fee:</p>
+      <div class="list" style="margin-top:8px"><div class="between"><span>${fmt(LOAN_BIG_FROM)} and above</span><b>${fmt(LOAN_FEE_BIG)} registration fee</b></div>
+      <div class="between"><span>Below ${fmt(LOAN_BIG_FROM)}</span><span class="muted">Smaller fee set by Dvillah. Ask admin.</span></div></div>
+      <button class="btn" id="reqLoan">Request a loan</button></div>
+      <h3 class="h2">My requests</h3><div class="card"><div class="list">${ls.length ? ls.map(l => `<div class="between"><div><b>${fmt(l.amount)}</b><div class="pm">${ftime(l.createdAt)} · acct ${esc(l.account)}</div></div><span class="badge ${bad[l.status]||"b-navy"}">${esc(l.status)}</span></div>`).join("") : '<div class="empty">No loan requests yet.</div>'}</div></div>`;
+  },
+  mount(){
+    $("#reqLoan").onclick = () => modal(`<h3>Request a loan</h3><p class="muted">Fee: ${fmt(LOAN_FEE_BIG)} if the amount is ${fmt(LOAN_BIG_FROM)} or more. For less, the admin will tell you the fee.</p>
+      <label>Amount (₦)</label><input id="lAmt" type="number" inputmode="numeric" placeholder="e.g. 50000">
+      <label>Bank name</label><input id="lBank" type="text" placeholder="e.g. GTBank">
+      <label>Account number</label><input id="lAcc" type="text" inputmode="numeric" placeholder="10 digits">
+      <div class="err" id="lErr"></div><button class="btn" id="lGo">Send request</button>`, (b, close) => {
+      $("#lGo", b).onclick = async () => {
+        const amount = num($("#lAmt", b).value), account = $("#lAcc", b).value.trim(), bank = $("#lBank", b).value.trim();
+        if(amount < 1000){ $("#lErr", b).textContent = "Type the amount you need."; return; }
+        if(account.length < 8){ $("#lErr", b).textContent = "Type your account number."; return; }
+        $("#lGo", b).disabled = true;
+        try{
+          await addDoc(collection(db,"loans"), {uid:S.user.uid, name:S.me.name, shortId:S.me.shortId, phone:S.me.phone||"", amount, account, bank, fee: amount >= LOAN_BIG_FROM ? LOAN_FEE_BIG : null, status:"pending", createdAt:Date.now()});
+          close(); toast("Request sent ✅");
+        }catch(e){ $("#lErr", b).textContent = "Could not send. Try again."; $("#lGo", b).disabled = false; }
+      };
+    });
+  }
+};
+
+PAGES.mart = {
+  title: "Mart", keys: ["products","orders"],
+  render(){
+    if(S.admin) return adminMartRender();
+    const ps = D("products").slice().sort(byNew), os = D("orders").slice().sort(byNew);
+    return `${ps.length ? `<div class="grid">${ps.map(p => `<div class="prod" data-p="${esc(p.id)}"><div class="im">${p.image ? `<img src="${esc(p.image)}" alt="">` : "🛍️"}</div><div class="in"><div class="nm">${esc(p.name)}</div><div class="pr">${fmt(p.price)}</div>${p.inStock ? '<span class="badge b-ok">In stock</span>' : '<span class="badge b-bad">Out of stock</span>'}</div></div>`).join("")}</div>` : '<div class="card empty">No products yet. Check back soon. 🛒</div>'}
+      ${os.length ? `<h3 class="h2" style="margin-top:20px">My orders</h3><div class="card"><div class="list">${os.map(o => `<div class="between"><div><b>${esc(o.productName)}</b><div class="pm">${ftime(o.createdAt)}</div></div><span class="badge ${o.status==="done"?"b-ok":"b-warn"}">${o.status==="new"?"sent":esc(o.status)}</span></div>`).join("")}</div></div>` : ""}
+      <p class="muted center" style="margin-top:16px">Mart items are paid separately by transfer, not from your Dvillah balance.</p>`;
+  },
+  mount(v){
+    if(S.admin) return adminMartMount(v);
+    $$("[data-p]", v).forEach(el => el.onclick = () => {
+      const p = D("products").find(x => x.id === el.dataset.p); if(!p) return;
+      modal(`${p.image ? `<img src="${esc(p.image)}" alt="" style="width:100%;border-radius:14px;margin-bottom:12px">` : ""}<h3>${esc(p.name)}</h3><div class="big" style="color:var(--red);font-size:24px;margin:6px 0">${fmt(p.price)}</div>
+        ${p.inStock ? '<span class="badge b-ok">In stock</span>' : '<span class="badge b-bad">Out of stock</span>'}
+        <p class="muted">Tap Order and the Dvillah admin will contact you to complete it.</p>
+        ${p.inStock ? '<button class="btn" id="ordGo">Order</button>' : ""}`, (b, close) => {
+        const go2 = $("#ordGo", b); if(!go2) return;
+        go2.onclick = async () => {
+          go2.disabled = true;
+          try{
+            await addDoc(collection(db,"orders"), {uid:S.user.uid, name:S.me.name, shortId:S.me.shortId, phone:S.me.phone||"", email:S.me.email||"", productId:p.id, productName:p.name, price:p.price, status:"new", createdAt:Date.now()});
+            close(); toast("Order sent! Admin will contact you 📞");
+          }catch(e){ toast("Could not send. Try again."); go2.disabled = false; }
+        };
+      });
+    });
+  }
+};
+
+PAGES.news = {
+  title: "Announcements", keys: ["news"],
+  render(){
+    if(S.admin) return adminNewsRender();
+    const ns = D("news").slice().sort(byNew);
+    localStorage.setItem("dv_ann_"+S.user.uid, String(Date.now()));
+    return ns.length ? ns.map(a => `<div class="card"><p style="margin:0;white-space:pre-wrap">${esc(a.text)}</p><div class="pm" style="margin-top:8px">📢 ${ftime(a.createdAt)}</div></div>`).join("") : '<div class="card empty">No announcements yet.</div>';
+  },
+  mount(v){ if(S.admin) adminNewsMount(v); else setTimeout(updateBadges, 0); }
+};
+
+function msgsHtml(list, mine){
+  if(!list.length) return '<div class="empty">No messages yet. Say hello 👋</div>';
+  return list.map(m => {
+    const me = m.from === mine;
+    const who = m.from === "admin" ? adminAv() : "";
+    return `<div class="msg ${me?"me":""}">${!me ? who : ""}<div>${!me && m.from==="admin" ? '<div class="who">Dvillah Admin</div>' : ""}<div class="bub">${m.image ? `<img src="${esc(m.image)}" alt="">` : ""}${m.text ? esc(m.text) : ""}<small>${ftime(m.at)}</small></div></div></div>`;
+  }).join("");
+}
+function chatShell(){
+  return `<div class="chatbox"><div class="msgs" id="msgs"></div>
+    <div class="compose"><label class="ibtn" style="margin:0">📷<input id="cPhoto" type="file" accept="image/*" class="hidden"></label><input id="cText" type="text" placeholder="Type a message…" autocomplete="off"><button class="btn sm" id="cSend" type="button">Send</button></div></div>`;
+}
+async function sendChat(uid, from, text, image, meta){
+  const msg = {from, at:Date.now()};
+  if(text) msg.text = text; if(image) msg.image = image;
+  await addDoc(collection(db,"chats",uid,"messages"), msg);
+  const base = {last: text || "📷 Photo", lastAt: msg.at};
+  if(from === "member") await setDoc(doc(db,"chats",uid), {...base, name:meta.name, shortId:meta.shortId, unreadAdmin:increment(1), unreadMember:0}, {merge:true});
+  else await setDoc(doc(db,"chats",uid), {...base, unreadMember:increment(1)}, {merge:true});
+}
+function bindCompose(uid, from, meta){
+  const send = async (text, img) => { try{ await sendChat(uid, from, text, img, meta); }catch(e){ toast("Could not send. Try again."); } };
+  $("#cSend").onclick = () => { const t = $("#cText").value.trim(); if(!t) return; $("#cText").value = ""; send(t); };
+  $("#cText").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); $("#cSend").click(); } });
+  $("#cPhoto").onchange = async e => { const f = e.target.files[0]; if(!f) return; try{ const img = await resizeImage(f, 800, .7); await send("", img); }catch(er){ toast("Could not use that photo."); } e.target.value = ""; };
+}
+function paintMsgs(list, mine){
+  const box = $("#msgs"); if(!box) return;
+  const atEnd = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.innerHTML = msgsHtml(list, mine);
+  if(atEnd || paintMsgs.first){ box.scrollTop = box.scrollHeight; paintMsgs.first = false; }
+}
+paintMsgs.first = true;
+
+PAGES.chat = {
+  title: "Dvillah Admin", keys: [],
+  render(){ return `<div class="between" style="margin-bottom:10px">${adminAv()}<div style="flex:1"><b>Dvillah Admin</b><div class="pm">Send us a message or a photo</div></div></div>` + chatShell(); },
+  mount(){ paintMsgs.first = true; bindCompose(S.user.uid, "member", {name:S.me.name, shortId:S.me.shortId}); PAGES.chat.update("msgs"); },
+  update(k){
+    if(k==="msgs"||k==="settings") paintMsgs(D("msgs"), "member");
+    if(k==="chatDoc" || k==="msgs"){ if(S.data.chatDoc && S.data.chatDoc.unreadMember) updateDoc(doc(db,"chats",S.user.uid), {unreadMember:0}).catch(() => {}); }
+  }
+};
+
+PAGES.history = {
+  title: "Payment history", keys: ["payments"],
+  render(){
+    const ps = myPays();
+    return `<div class="card"><div class="list">${ps.length ? ps.map(p => `<div class="between"><div><b>${esc(p.desc)}</b><div class="pm">${fdate(p.date)}</div></div><b style="color:var(--ok)">+${fmt(p.tAmount)}</b></div>`).join("") : '<div class="empty">No payments recorded yet.</div>'}</div></div>`;
+  }
+};
+
+PAGES.notes = {
+  title: "Notifications", keys: ["notes"],
+  render(){
+    const ns = D("notes").slice().sort(byNew);
+    return `${ns.some(n => !n.read) ? '<button class="btn ghost sm" id="readAll" style="margin-bottom:12px">Mark all as read</button>' : ""}
+      <div class="card"><div class="list">${ns.length ? ns.map(n => `<div data-n="${esc(n.id)}" style="${n.read?"opacity:.6":""}"><div>${n.read?"":"🔴 "}${esc(n.text)}</div><div class="pm">${ftime(n.createdAt)}</div></div>`).join("") : '<div class="empty">No notifications yet. 🔔</div>'}</div></div>`;
+  },
+  mount(v){
+    const mark = id => updateDoc(doc(db,"notifications",id), {read:true}).catch(() => {});
+    $$("[data-n]", v).forEach(el => el.onclick = () => mark(el.dataset.n));
+    const ra = $("#readAll"); if(ra) ra.onclick = () => D("notes").filter(n => !n.read).forEach(n => mark(n.id));
+  }
+};
+
+PAGES.profile = {
+  title: "Profile", keys: ["me"],
+  render(){
+    const m = S.me || {};
+    return `<div class="card center"><div style="font-size:50px">👤</div><h2>${esc(m.name)}</h2><p class="muted">${esc(m.email)}</p><span class="badge b-ok">Verified member</span></div>
+      <div class="card"><div class="list"><div class="between"><span class="muted">Member ID</span><b>${esc(m.shortId)}</b></div><div class="between"><span class="muted">Phone</span><b>${esc(m.phone||"—")}</b></div></div></div>
+      <button class="btn ghost" id="pwReset">Change password by email</button><button class="btn navy" id="pfOut">Log out</button>`;
+  },
+  mount(){
+    $("#pfOut").onclick = doLogout;
+    $("#pwReset").onclick = async () => { try{ await sendPasswordResetEmail(auth, S.user.email); toast("Reset link sent to your email 📧"); }catch(e){ toast("Try again in a minute."); } };
+  }
+};
+
+/* ================= ADMIN PAGES ================= */
+const addNote = (uid, text) => addDoc(collection(db,"notifications"), {uid, text, read:false, createdAt:Date.now()}).catch(() => {});
+const verifiedUsers = () => D("users").filter(u => u.status === "verified").sort((a,b) => (a.name||"").localeCompare(b.name||""));
+const userBy = uid => D("users").find(u => u.uid === uid);
+const me_ = () => (S.user && S.user.email) || "admin";
+
+PAGES.dash = {
+  title: "Dashboard", keys: ["users","payments","loans","orders","chats","groups"],
+  render(){
+    const us = D("users"), ver = us.filter(u => u.status === "verified"), pend = us.filter(u => u.status !== "verified");
+    const held = sum(ver.map(u => total(u.balances)));
+    const t = (n, l, go2) => `<div class="stat" data-go="${go2}" style="cursor:pointer"><b>${n}</b><span>${l}</span></div>`;
+    return `<div class="story"><h2>Hello, Dvillah Admin 👋</h2><p style="margin:0">Total recorded for all members</p><div style="font-size:30px;font-weight:800;margin-top:4px">${fmt(held)}</div></div>
+      <div class="grid" style="margin-top:14px">
+      ${t(ver.length,"✅ Verified members","members")}${t(pend.length,"⏳ Waiting to verify","members")}
+      ${t(D("loans").filter(l=>l.status==="pending").length,"🏦 Loan requests","loans")}${t(D("orders").filter(o=>o.status==="new").length,"🛒 New orders","mart")}
+      ${t(sum(D("chats").map(c=>c.unreadAdmin)),"💬 Unread messages","inbox")}${t(D("groups").length,"🤝 Groups","groups")}</div>
+      <button class="btn" data-go="sheet">🧾 Open the sheet</button><button class="btn navy" data-go="scan">📷 Scan an e-card</button>`;
+  },
+  mount(v){ $$("[data-go]", v).forEach(b => b.onclick = () => go(b.dataset.go)); }
+};
+
+/* ---------- sheet ---------- */
+const COLS = "Date,Name,Amount,T.Amount,Description,Group".split(",");
+async function savePayment(p){
+  const b = writeBatch(db);
+  const ref = doc(collection(db,"payments"));
+  b.set(ref, p);
+  b.update(doc(db,"users",p.uid), {["balances."+SECTIONS[p.desc]]: increment(p.tAmount)});
+  b.set(doc(collection(db,"notifications")), {uid:p.uid, text:`${fmt(p.tAmount)} recorded for ${p.desc} on ${fdate(p.date)} ✅`, read:false, createdAt:Date.now()});
+  await b.commit();
+}
+async function editPayment(old, nw){
+  const b = writeBatch(db);
+  const deltas = {};
+  const add = (uid, sec, d) => { deltas[uid] = deltas[uid] || {}; deltas[uid][sec] = (deltas[uid][sec]||0) + d; };
+  add(old.uid, SECTIONS[old.desc], -old.tAmount);
+  add(nw.uid, SECTIONS[nw.desc], nw.tAmount);
+  Object.entries(deltas).forEach(([uid, secs]) => {
+    const upd = {}; Object.entries(secs).forEach(([s, d]) => { if(d) upd["balances."+s] = increment(d); });
+    if(Object.keys(upd).length) b.update(doc(db,"users",uid), upd);
+  });
+  b.update(doc(db,"payments",old.id), {...nw, edited:true, editedBy:me_(), editedAt:Date.now()});
+  const pick = x => ({date:x.date, uid:x.uid, name:x.name, amount:x.amount, tAmount:x.tAmount, desc:x.desc, groupId:x.groupId||""});
+  b.set(doc(collection(db,"audit")), {at:Date.now(), by:me_(), paymentId:old.id, before:pick(old), after:pick(nw)});
+  await b.commit();
+}
+function groupOptions(uid, sel){
+  const gs = D("groups").filter(g => (g.memberUids||[]).includes(uid));
+  return `<option value="">— none —</option>` + gs.map(g => `<option value="${esc(g.id)}" ${g.id===sel?"selected":""}>${esc(g.name)}</option>`).join("");
+}
+function sheetRows(){
+  const q = ($("#shFilter") && $("#shFilter").value.trim().toLowerCase()) || "";
+  const ps = D("payments").slice().sort((a,b) => byNew(a,b)).filter(p => !q || (p.name||"").toLowerCase().includes(q)).slice(0, 150);
+  if(!ps.length) return `<tr><td colspan="6" class="v empty">No entries yet.</td></tr>`;
+  return ps.map(p => `<tr class="r" data-id="${esc(p.id)}"><td class="v">${fdate(p.date)}</td><td class="v">${esc(p.name)}${p.edited?" ✎":""}</td><td class="v">${fmt(p.amount)}</td><td class="v"><b>${fmt(p.tAmount)}</b></td><td class="v">${esc(p.desc)}</td><td class="v">${esc((D("groups").find(g=>g.id===p.groupId)||{}).name||"")}</td></tr>`).join("");
+}
+function paintSheetRows(){
+  const tb = $("#shRows"); if(!tb) return;
+  tb.innerHTML = sheetRows();
+  $$("tr.r", tb).forEach(tr => tr.onclick = () => editModal(D("payments").find(p => p.id === tr.dataset.id)));
+}
+function editModal(p){
+  if(!p) return;
+  modal(`<h3>Edit entry</h3><p class="muted">Changes fix the member's balance and are recorded in the audit log.</p>
+    <label>Date</label><input id="eDate" type="date" value="${esc(p.date)}">
+    <label>Name</label><input id="eName" type="text" value="${esc(p.name)}" data-uid="${esc(p.uid)}" autocomplete="off">
+    <div class="row"><div><label>Amount</label><input id="eAmt" type="number" inputmode="numeric" value="${p.amount}"></div><div><label>T.Amount</label><input id="eTot" type="number" inputmode="numeric" value="${p.tAmount}"></div></div>
+    <label>Description</label><select id="eDesc">${Object.keys(SECTIONS).map(s => `<option ${s===p.desc?"selected":""}>${s}</option>`).join("")}</select>
+    <div id="eGrpWrap"><label>Group</label><select id="eGrp"></select></div>
+    <div class="err" id="eErr"></div><button class="btn" id="eSave">Save changes</button>`, (b, close) => {
+    const grp = () => { const uid = $("#eName", b).dataset.uid; $("#eGrp", b).innerHTML = groupOptions(uid, p.groupId); $("#eGrpWrap", b).classList.toggle("hidden", $("#eDesc", b).value !== "Contribution"); };
+    attachPicker($("#eName", b), verifiedUsers, grp);
+    $("#eDesc", b).onchange = grp; grp();
+    $("#eSave", b).onclick = async () => {
+      const uid = $("#eName", b).dataset.uid, u = userBy(uid);
+      const amount = num($("#eAmt", b).value), tAmount = num($("#eTot", b).value), desc = $("#eDesc", b).value;
+      if(!u){ $("#eErr", b).textContent = "Pick the member name from the list."; return; }
+      if(!$("#eDate", b).value){ $("#eErr", b).textContent = "Type the date."; return; }
+      $("#eSave", b).disabled = true;
+      try{
+        await editPayment(p, {date:$("#eDate", b).value, uid, name:u.name, shortId:u.shortId, amount, tAmount, desc, groupId: desc==="Contribution" ? $("#eGrp", b).value : ""});
+        close(); toast("Saved ✅");
+      }catch(e){ $("#eErr", b).textContent = "Could not save. Try again."; $("#eSave", b).disabled = false; }
+    };
+  });
+}
+PAGES.sheet = {
+  title: "Sheet", keys: [],
+  render(){
+    return `<div class="sheetwrap"><table class="sheet"><thead><tr>${COLS.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>
+      <tr class="newrow"><td><input id="nDate" type="date"></td><td><input id="nName" type="text" placeholder="Type name…" autocomplete="off"></td>
+      <td><input id="nAmt" type="number" inputmode="numeric" placeholder="0"></td><td><input id="nTot" type="number" inputmode="numeric" placeholder="0"></td>
+      <td><select id="nDesc"><option value="">Pick…</option>${Object.keys(SECTIONS).map(s => `<option>${s}</option>`).join("")}</select></td>
+      <td><select id="nGrp" disabled><option value="">—</option></select></td></tr>
+      </tbody><tbody id="shRows"></tbody></table></div>
+      <div class="err" id="nErr"></div>
+      <button class="btn" id="nAdd">➕ Add to sheet</button>
+      <label>Search the sheet</label><input id="shFilter" type="text" placeholder="Type a name…">`;
+  },
+  mount(){
+    const grp = () => { const uid = $("#nName").dataset.uid, on = $("#nDesc").value === "Contribution" && uid; $("#nGrp").disabled = !on; $("#nGrp").innerHTML = on ? groupOptions(uid, "") : '<option value="">—</option>'; };
+    attachPicker($("#nName"), verifiedUsers, grp);
+    $("#nDesc").onchange = grp;
+    $("#shFilter").oninput = paintSheetRows;
+    $("#nAdd").onclick = async () => {
+      const err = $("#nErr"); err.textContent = "";
+      const uid = $("#nName").dataset.uid, u = userBy(uid), date = $("#nDate").value, amount = num($("#nAmt").value);
+      const tAmount = $("#nTot").value === "" ? amount : num($("#nTot").value), desc = $("#nDesc").value;
+      if(!date){ err.textContent = "Type the date."; return; }
+      if(!u){ err.textContent = "Pick the member from the name list."; return; }
+      if(!(tAmount > 0)){ err.textContent = "Type the amount."; return; }
+      if(!desc){ err.textContent = "Pick Food, Savings or Contribution."; return; }
+      $("#nAdd").disabled = true;
+      try{
+        await savePayment({date, uid, name:u.name, shortId:u.shortId, amount: amount || tAmount, tAmount, desc, groupId: desc==="Contribution" ? $("#nGrp").value : "", by:me_(), createdAt:Date.now()});
+        ["nName","nAmt","nTot"].forEach(i => { $("#"+i).value = ""; }); $("#nName").dataset.uid = ""; $("#nDesc").value = ""; grp();
+        toast("Added ✅");
+      }catch(e){ err.textContent = "Could not save. Try again."; }
+      $("#nAdd").disabled = false;
+    };
+    paintSheetRows();
+  },
+  update(k){ if(["payments","users","groups"].includes(k)) paintSheetRows(); }
+};
+
+/* ---------- members ---------- */
+function memberModal(u){
+  const pays = D("payments").filter(p => p.uid === u.uid).sort(byNew).slice(0, 8);
+  const b = u.balances || {};
+  modal(`<div class="between"><h3>${esc(u.name)}</h3><span class="badge ${u.status==="verified"?"b-ok":"b-warn"}">${u.status==="verified"?"Verified":"Pending"}</span></div>
+    <div class="list" style="margin:8px 0"><div class="between"><span class="muted">Member ID</span><b>${esc(u.shortId)}</b></div>
+    <div class="between"><span class="muted">Card number</span><b>${esc(fmtCard(u.cardNumber))}</b></div>
+    <div class="between"><span class="muted">Email</span><span>${esc(u.email)}</span></div>
+    <div class="between"><span class="muted">Phone</span>${u.phone ? `<a href="tel:${esc(u.phone)}">${esc(u.phone)}</a>` : "—"}</div></div>
+    <div class="row">${["savings","contribution","food"].map(k => `<div class="stat"><b style="font-size:14px">${fmt(b[k])}</b><span>${SEC_ICON[k]}</span></div>`).join("")}</div>
+    <div class="between" style="margin-top:10px"><b>Total</b><b>${fmt(total(b))}</b></div>
+    ${pays.length ? `<h3 style="margin-top:14px;font-size:15px">Latest payments</h3><div class="list">${pays.map(payRow).join("")}</div>` : ""}
+    ${u.status==="verified" ? '<button class="btn ghost" id="mUn">Set back to pending</button>' : '<button class="btn" id="mVer">✅ Verify member</button>'}
+    <button class="btn navy" id="mChat">💬 Open chat</button>`, (bx, close) => {
+    const setSt = async st => { try{ await updateDoc(doc(db,"users",u.uid), {status:st}); if(st==="verified") addNote(u.uid, "Welcome to Dvillah! You are now verified 🎉"); close(); toast("Done ✅"); }catch(e){ toast("Could not save."); } };
+    const v = $("#mVer", bx); if(v) v.onclick = () => setSt("verified");
+    const un = $("#mUn", bx); if(un) un.onclick = () => confirmBox("Set this member back to pending?", "Yes", () => setSt("pending"));
+    $("#mChat", bx).onclick = () => { close(); go("thread", {uid:u.uid}); };
+  });
+}
+PAGES.members = {
+  title: "Members", keys: [],
+  render(){ return `<input id="mSearch" type="text" placeholder="🔍 Search name, ID or email"><div class="card" style="margin-top:12px"><div class="list" id="mList"></div></div>`; },
+  mount(){ $("#mSearch").oninput = PAGES.members.paint; PAGES.members.paint(); },
+  paint(){
+    const l = $("#mList"); if(!l) return;
+    const q = ($("#mSearch").value||"").trim().toLowerCase();
+    const us = D("users").slice().sort((a,b) => (a.status==="verified") - (b.status==="verified") || (a.name||"").localeCompare(b.name||""))
+      .filter(u => !q || [u.name,u.shortId,u.email].some(x => (x||"").toLowerCase().includes(q)));
+    l.innerHTML = us.length ? us.map(u => `<div class="between" data-u="${esc(u.uid)}" style="cursor:pointer"><div><b>${esc(u.name)}</b><div class="pm">${esc(u.shortId)} · ${esc(u.email)}</div></div><span class="badge ${u.status==="verified"?"b-ok":"b-warn"}">${u.status==="verified"?fmt(total(u.balances)):"Pending"}</span></div>`).join("") : '<div class="empty">No members found.</div>';
+    $$("[data-u]", l).forEach(el => el.onclick = () => memberModal(userBy(el.dataset.u)));
+  },
+  update(k){ if(k==="users") PAGES.members.paint(); }
+};
+
+/* ---------- contribution groups ---------- */
+function groupForm(g){
+  const chosen = g ? (g.members||[]).map(m => m.uid) : [];
+  modal(`<h3>${g?"Edit group":"New group"}</h3>
+    <label>Group name</label><input id="gName" type="text" value="${esc(g?g.name:"")}" placeholder="e.g. Ajo A">
+    <div class="row"><div><label>Daily amount (₦)</label><input id="gDaily" type="number" inputmode="numeric" value="${g?g.daily:""}" placeholder="1000"></div>
+    <div><label>Days per round</label><input id="gDays" type="number" inputmode="numeric" value="${g?(g.cycleDays||""):""}" placeholder="auto"></div></div>
+    <label>Add members (in the order they collect)</label><input id="gAdd" type="text" placeholder="Type a name…" autocomplete="off">
+    <div id="gList" class="list" style="margin-top:8px"></div>
+    <div class="err" id="gErr"></div><button class="btn" id="gSave">${g?"Save group":"Create group"}</button>`, (b, close) => {
+    const paint = () => {
+      $("#gList", b).innerHTML = chosen.length ? chosen.map((uid,i) => { const u = userBy(uid) || (g && g.members.find(m => m.uid===uid)) || {name:"?",shortId:""};
+        return `<div class="between"><span>${i+1}. ${esc(u.name)} <span class="pm">${esc(u.shortId)}</span></span><span><button class="ibtn" data-a="up" data-i="${i}">⬆️</button><button class="ibtn" data-a="dn" data-i="${i}">⬇️</button><button class="ibtn" data-a="rm" data-i="${i}">✖️</button></span></div>`; }).join("") : '<div class="empty">No members added yet.</div>';
+      $$("[data-a]", b).forEach(btn => btn.onclick = () => {
+        const i = Number(btn.dataset.i), a = btn.dataset.a;
+        if(a==="rm") chosen.splice(i,1);
+        else if(a==="up" && i>0) [chosen[i-1],chosen[i]] = [chosen[i],chosen[i-1]];
+        else if(a==="dn" && i<chosen.length-1) [chosen[i+1],chosen[i]] = [chosen[i],chosen[i+1]];
+        paint();
+      });
+    };
+    attachPicker($("#gAdd", b), () => verifiedUsers().filter(u => !chosen.includes(u.uid)), u => {
+      if(!u) return;
+      const inCount = D("groups").filter(x => (!g || x.id !== g.id) && (x.memberUids||[]).includes(u.uid)).length;
+      if(inCount >= 3){ toast(u.name + " is already in 3 groups"); }
+      else chosen.push(u.uid);
+      $("#gAdd", b).value = ""; paint();
+    });
+    paint();
+    $("#gSave", b).onclick = async () => {
+      const name = $("#gName", b).value.trim(), daily = num($("#gDaily", b).value), err = $("#gErr", b);
+      if(!name){ err.textContent = "Type a group name."; return; }
+      if(daily < 1000){ err.textContent = "Daily amount starts from ₦1,000."; return; }
+      if(chosen.length < 2){ err.textContent = "Add at least 2 members."; return; }
+      const members = chosen.map(uid => { const u = userBy(uid) || (g && g.members.find(m => m.uid===uid)); return {uid, name:u.name, shortId:u.shortId}; });
+      const cycleDays = num($("#gDays", b).value) || members.length;
+      $("#gSave", b).disabled = true;
+      try{
+        if(g){
+          await updateDoc(doc(db,"groups",g.id), {name, daily, cycleDays, members, memberUids:chosen, collected:(g.collected||[]).filter(u => chosen.includes(u))});
+        } else {
+          await addDoc(collection(db,"groups"), {name, daily, cycleDays, members, memberUids:chosen, collected:[], startAt:Date.now(), lastPayoutAt:0, createdAt:Date.now()});
+          chosen.forEach(uid => addNote(uid, `You were added to the contribution group "${name}" 🤝`));
+        }
+        close(); toast("Saved ✅");
+      }catch(e){ err.textContent = "Could not save. Try again."; $("#gSave", b).disabled = false; }
+    };
+  });
+}
+function groupModal(g){
+  const {col, nextUid, done} = groupState(g);
+  const next = (g.members||[]).find(m => m.uid === nextUid);
+  const paid = uid => sum(D("payments").filter(p => p.groupId === g.id && p.uid === uid).map(p => p.tAmount));
+  modal(`<div class="between"><h3>${esc(g.name)}</h3><span class="badge b-navy">${fmt(g.daily)} / day</span></div>
+    <p class="muted">Pot per round: <b>${fmt(g.daily * (g.members||[]).length)}</b> · ${done ? "Round complete" : daysLeft(g) + " day(s) to next payout"}</p>
+    <div class="list">${(g.members||[]).map((m,i) => `<div class="between"><span>${i+1}. ${esc(m.name)} <span class="pm">${esc(m.shortId)} · paid ${fmt(paid(m.uid))}</span></span>${col.includes(m.uid) ? '<span class="badge b-ok">Collected ✅</span>' : m.uid===nextUid ? '<span class="badge b-warn">Next 👉</span>' : '<span class="badge b-navy">Waiting</span>'}</div>`).join("")}</div>
+    ${done ? '<button class="btn" id="gNew">🔄 Start a new round</button>' : `<button class="btn" id="gPay">💸 Pay out to ${esc(next.name)}</button>`}
+    <div class="row"><button class="btn ghost" id="gEdit">Edit</button><button class="btn ghost" id="gDel">Delete</button></div>`, (b, close) => {
+    const pay = $("#gPay", b);
+    if(pay) pay.onclick = () => confirmBox(`Pay out ${fmt(g.daily*g.members.length)} to ${next.name}?`, "Pay out", async () => {
+      try{
+        await updateDoc(doc(db,"groups",g.id), {collected:[...col, next.uid], lastPayoutAt:Date.now()});
+        addNote(next.uid, `You collected the ${g.name} payout 🎉`);
+        addDoc(collection(db,"audit"), {at:Date.now(), by:me_(), type:"payout", groupId:g.id, uid:next.uid}).catch(() => {});
+        close(); toast("Paid out ✅");
+      }catch(e){ toast("Could not save."); }
+    });
+    const nw = $("#gNew", b); if(nw) nw.onclick = async () => { await updateDoc(doc(db,"groups",g.id), {collected:[], startAt:Date.now(), lastPayoutAt:0}); close(); toast("New round started 🔄"); };
+    $("#gEdit", b).onclick = () => { close(); groupForm(g); };
+    $("#gDel", b).onclick = () => confirmBox("Delete this group?", "Delete", async () => { await deleteDoc(doc(db,"groups",g.id)); close(); toast("Deleted"); });
+  });
+}
+PAGES.groups = {
+  title: "Contribution groups", keys: ["groups"],
+  render(){
+    const gs = D("groups").slice().sort(byNew);
+    return `<button class="btn" id="gNewBtn" style="margin-top:0">➕ New group</button><div style="margin-top:14px">${gs.length ? gs.map(g => { const {done, nextUid} = groupState(g); const nx = (g.members||[]).find(m => m.uid===nextUid);
+      return `<div class="card" data-g="${esc(g.id)}" style="cursor:pointer"><div class="between"><h3>${esc(g.name)}</h3><span class="badge b-navy">${fmt(g.daily)}/day</span></div><div class="pm" style="margin-top:6px">${(g.members||[]).length} members · ${done ? "Round complete" : "Next: " + esc(nx.name) + " · " + daysLeft(g) + " day(s)"}</div></div>`; }).join("") : '<div class="card empty">No groups yet.</div>'}</div>`;
+  },
+  mount(v){ $("#gNewBtn").onclick = () => groupForm(null); $$("[data-g]", v).forEach(el => el.onclick = () => groupModal(D("groups").find(g => g.id === el.dataset.g))); }
+};
+
+/* ---------- loans ---------- */
+PAGES.loans = {
+  title: "Loans", keys: ["loans"],
+  render(){
+    const ls = D("loans").slice().sort((a,b) => (a.status==="pending"?0:1) - (b.status==="pending"?0:1) || byNew(a,b));
+    const bad = {pending:"b-warn", approved:"b-ok", rejected:"b-bad"};
+    return `<div class="card"><div class="list">${ls.length ? ls.map(l => `<div class="between" data-l="${esc(l.id)}" style="cursor:pointer"><div><b>${esc(l.name)}</b> <span class="pm">${esc(l.shortId)}</span><div class="pm">${fmt(l.amount)} · ${ftime(l.createdAt)}</div></div><span class="badge ${bad[l.status]||"b-navy"}">${esc(l.status)}</span></div>`).join("") : '<div class="empty">No loan requests yet.</div>'}</div></div>`;
+  },
+  mount(v){
+    $$("[data-l]", v).forEach(el => el.onclick = () => {
+      const l = D("loans").find(x => x.id === el.dataset.l); if(!l) return;
+      modal(`<h3>${fmt(l.amount)}</h3><div class="list"><div class="between"><span class="muted">Member</span><b>${esc(l.name)} (${esc(l.shortId)})</b></div>
+        <div class="between"><span class="muted">Phone</span>${l.phone?`<a href="tel:${esc(l.phone)}">${esc(l.phone)}</a>`:"—"}</div>
+        <div class="between"><span class="muted">Bank</span><span>${esc(l.bank||"—")}</span></div><div class="between"><span class="muted">Account number</span><b>${esc(l.account)}</b></div>
+        <div class="between"><span class="muted">Registration fee</span><span>${l.fee ? fmt(l.fee) : "Set by Dvillah"}</span></div>
+        <div class="between"><span class="muted">Status</span><b>${esc(l.status)}</b></div></div>
+        ${l.status==="pending" ? '<div class="row"><button class="btn ghost" id="lNo">Reject</button><button class="btn" id="lYes">Approve</button></div>' : ""}`, (b, close) => {
+        const dec = async st => { try{ await updateDoc(doc(db,"loans",l.id), {status:st, decidedBy:me_(), decidedAt:Date.now()}); addNote(l.uid, st==="approved" ? `Your ${fmt(l.amount)} loan was approved ✅` : `Your ${fmt(l.amount)} loan request was not approved. Message admin for details.`); close(); toast("Done ✅"); }catch(e){ toast("Could not save."); } };
+        const y = $("#lYes", b); if(y){ y.onclick = () => dec("approved"); $("#lNo", b).onclick = () => dec("rejected"); }
+      });
+    });
+  }
+};
+
+/* ---------- mart (admin) ---------- */
+S.martTab = "products";
+function adminMartRender(){
+  const tab = S.martTab;
+  let body = "";
+  if(tab === "products"){
+    const ps = D("products").slice().sort(byNew);
+    body = `<button class="btn" id="pNew" style="margin-top:0">➕ Add product</button><div class="grid" style="margin-top:14px">${ps.map(p => `<div class="prod" data-p="${esc(p.id)}"><div class="im">${p.image ? `<img src="${esc(p.image)}" alt="">` : "🛍️"}</div><div class="in"><div class="nm">${esc(p.name)}</div><div class="pr">${fmt(p.price)}</div>${p.inStock ? '<span class="badge b-ok">In stock</span>' : '<span class="badge b-bad">Out of stock</span>'}</div></div>`).join("")}</div>`;
+  } else {
+    const os = D("orders").slice().sort((a,b) => (a.status==="new"?0:1) - (b.status==="new"?0:1) || byNew(a,b));
+    body = `<div class="card"><div class="list">${os.length ? os.map(o => `<div class="between" data-o="${esc(o.id)}" style="cursor:pointer"><div><b>${esc(o.productName)}</b> · ${fmt(o.price)}<div class="pm">${esc(o.name)} (${esc(o.shortId)}) · ${ftime(o.createdAt)}</div></div><span class="badge ${o.status==="new"?"b-warn":o.status==="done"?"b-ok":"b-navy"}">${esc(o.status)}</span></div>`).join("") : '<div class="empty">No orders yet.</div>'}</div></div>`;
+  }
+  return `<div class="tabs"><button data-t="products" class="${tab==="products"?"on":""}">Products</button><button data-t="orders" class="${tab==="orders"?"on":""}">Orders</button></div>${body}`;
+}
+function productForm(p){
+  let image = p ? p.image || "" : "";
+  modal(`<h3>${p?"Edit product":"Add product"}</h3>
+    <div id="pvImg" style="margin:8px 0">${image ? `<img src="${image}" style="width:100%;border-radius:14px">` : ""}</div>
+    <label class="btn ghost sm" style="display:inline-block;margin:0">📷 ${p?"Change":"Add"} picture<input id="pFile" type="file" accept="image/*" class="hidden"></label>
+    <label>Name</label><input id="pName" type="text" value="${esc(p?p.name:"")}">
+    <label>Price (₦)</label><input id="pPrice" type="number" inputmode="numeric" value="${p?p.price:""}">
+    <label>Availability</label><select id="pStock"><option value="1" ${!p||p.inStock?"selected":""}>In stock</option><option value="0" ${p&&!p.inStock?"selected":""}>Out of stock</option></select>
+    <div class="err" id="pErr"></div><button class="btn" id="pSave">Save</button>${p ? '<button class="btn ghost" id="pDel">Delete product</button>' : ""}`, (b, close) => {
+    $("#pFile", b).onchange = async e => { const f = e.target.files[0]; if(!f) return; try{ image = await resizeImage(f, 700, .72); $("#pvImg", b).innerHTML = `<img src="${image}" style="width:100%;border-radius:14px">`; }catch(er){ toast("Could not use that picture."); } };
+    $("#pSave", b).onclick = async () => {
+      const name = $("#pName", b).value.trim(), price = num($("#pPrice", b).value);
+      if(!name || !(price > 0)){ $("#pErr", b).textContent = "Type the name and price."; return; }
+      const data = {name, price, image, inStock: $("#pStock", b).value === "1"};
+      try{ if(p) await updateDoc(doc(db,"products",p.id), data); else await addDoc(collection(db,"products"), {...data, createdAt:Date.now()}); close(); toast("Saved ✅"); }
+      catch(e){ $("#pErr", b).textContent = "Could not save (picture may be too big)."; }
+    };
+    const d = $("#pDel", b); if(d) d.onclick = () => confirmBox("Delete this product?", "Delete", async () => { await deleteDoc(doc(db,"products",p.id)); close(); toast("Deleted"); });
+  });
+}
+function adminMartMount(v){
+  $$("[data-t]", v).forEach(b => b.onclick = () => { S.martTab = b.dataset.t; renderPage(); });
+  const n = $("#pNew"); if(n) n.onclick = () => productForm(null);
+  $$("[data-p]", v).forEach(el => el.onclick = () => productForm(D("products").find(p => p.id === el.dataset.p)));
+  $$("[data-o]", v).forEach(el => el.onclick = () => {
+    const o = D("orders").find(x => x.id === el.dataset.o); if(!o) return;
+    modal(`<h3>${esc(o.productName)}</h3><div class="list"><div class="between"><span class="muted">Price</span><b>${fmt(o.price)}</b></div><div class="between"><span class="muted">Member</span><b>${esc(o.name)} (${esc(o.shortId)})</b></div>
+      <div class="between"><span class="muted">Phone</span>${o.phone?`<a href="tel:${esc(o.phone)}">${esc(o.phone)}</a>`:"—"}</div><div class="between"><span class="muted">Email</span><span>${esc(o.email||"—")}</span></div>
+      <div class="between"><span class="muted">Status</span><b>${esc(o.status)}</b></div></div>
+      <div class="row"><button class="btn ghost" id="oC">Contacted</button><button class="btn" id="oD">Done</button></div><button class="btn navy" id="oChat">💬 Open chat</button>`, (b, close) => {
+      const st = async s => { await updateDoc(doc(db,"orders",o.id), {status:s}); close(); toast("Updated ✅"); };
+      $("#oC", b).onclick = () => st("contacted"); $("#oD", b).onclick = () => st("done");
+      $("#oChat", b).onclick = () => { close(); go("thread", {uid:o.uid}); };
+    });
+  });
+}
+
+/* ---------- chats (admin) ---------- */
+PAGES.inbox = {
+  title: "Chats", keys: ["chats"],
+  render(){
+    const cs = D("chats").slice().sort((a,b) => (b.lastAt||0) - (a.lastAt||0));
+    return `<div class="card"><div class="list">${cs.length ? cs.map(c => `<div class="between" data-c="${esc(c.id)}" style="cursor:pointer"><div style="min-width:0"><b>${esc(c.name)}</b> <span class="pm">${esc(c.shortId)}</span><div class="pm" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw">${esc(c.last)}</div></div>${c.unreadAdmin ? `<span class="badge b-bad">${c.unreadAdmin}</span>` : `<span class="pm">${ftime(c.lastAt)}</span>`}</div>`).join("") : '<div class="empty">No chats yet.</div>'}</div></div>`;
+  },
+  mount(v){ $$("[data-c]", v).forEach(el => el.onclick = () => go("thread", {uid:el.dataset.c})); }
+};
+PAGES.thread = {
+  title: () => { const c = D("chats").find(x => x.id === S.params.uid) || userBy(S.params.uid); return c ? c.name : "Chat"; }, keys: [],
+  render(){ return chatShell(); },
+  mount(){
+    const uid = S.params.uid;
+    paintMsgs.first = true;
+    const u = D("chats").find(x => x.id === uid) || userBy(uid) || {};
+    bindCompose(uid, "admin", {name:u.name, shortId:u.shortId});
+    listen("thread", query(collection(db,"chats",uid,"messages"), orderBy("at")));
+    setTimeout(() => { PAGES.thread.update("thread"); }, 0);
+    updateDoc(doc(db,"chats",uid), {unreadAdmin:0}).catch(() => {});
+  },
+  leave(){ if(S.unsubs.thread){ S.unsubs.thread(); delete S.unsubs.thread; } },
+  update(k){
+    if(k==="thread"||k==="settings") paintMsgs(D("thread"), "admin");
+    if(k==="chats"){ const c = D("chats").find(x => x.id === S.params.uid); if(c && c.unreadAdmin) updateDoc(doc(db,"chats",S.params.uid), {unreadAdmin:0}).catch(() => {}); }
+  }
+};
+
+/* ---------- announcements (admin) ---------- */
+function adminNewsRender(){
+  return `<div class="card"><label style="margin-top:0">New announcement</label><textarea id="nText" placeholder="Write something for all members…"></textarea><button class="btn" id="nPost">📢 Post</button></div><div id="nList"></div>`;
+}
+function paintNews(){
+  const l = $("#nList"); if(!l) return;
+  const ns = D("news").slice().sort(byNew);
+  l.innerHTML = ns.length ? ns.map(a => `<div class="card"><p style="margin:0;white-space:pre-wrap">${esc(a.text)}</p><div class="between" style="margin-top:8px"><span class="pm">${ftime(a.createdAt)}</span><button class="btn ghost sm" data-d="${esc(a.id)}">Delete</button></div></div>`).join("") : '<div class="card empty">No announcements yet.</div>';
+  $$("[data-d]", l).forEach(b => b.onclick = () => confirmBox("Delete this announcement?", "Delete", () => deleteDoc(doc(db,"announcements",b.dataset.d))));
+}
+function adminNewsMount(){
+  $("#nPost").onclick = async () => {
+    const t = $("#nText").value.trim(); if(!t) return;
+    try{ await addDoc(collection(db,"announcements"), {text:t, by:me_(), createdAt:Date.now()}); $("#nText").value = ""; toast("Posted ✅"); }catch(e){ toast("Could not post."); }
+  };
+  paintNews();
+}
+PAGES.news.update = k => { if(k !== "news") return; if(S.admin) paintNews(); else renderPage(); };
+
+/* ---------- scan ---------- */
+let scanner = null;
+async function stopScan(){ if(scanner){ try{ await scanner.stop(); }catch(e){} try{ scanner.clear(); }catch(e){} scanner = null; } }
+PAGES.scan = {
+  title: "Scan e-card", keys: [],
+  render(){ return `<div class="card"><p class="muted" style="margin-top:0">Ask the member to open their e-card, flip it, and show the QR code. 📷</p><div id="reader"></div><div class="err" id="scErr"></div><button class="btn" id="scGo">Start scanning</button></div>`; },
+  mount(){
+    $("#scGo").onclick = async () => {
+      $("#scErr").textContent = "";
+      try{
+        await loadScript("https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js");
+        await stopScan();
+        scanner = new Html5Qrcode("reader");
+        await scanner.start({facingMode:"environment"}, {fps:10, qrbox:220}, async text => {
+          const u = D("users").find(x => x.qrCode === text);
+          await stopScan();
+          if(u) memberModal(u); else toast("That is not a Dvillah e-card.");
+        });
+      }catch(e){ $("#scErr").textContent = "Could not open the camera. Please allow camera access."; }
+    };
+  },
+  leave(){ stopScan(); }
+};
+
+/* ---------- settings ---------- */
+PAGES.settings = {
+  title: "Settings", keys: [],
+  render(){
+    const s = S.settings || {};
+    return `<div class="card"><b>🏦 Company account (shown to members)</b>
+      <label>Bank name</label><input id="sBank" type="text" value="${esc(s.bank||"")}">
+      <label>Account name</label><input id="sName" type="text" value="${esc(s.accountName||"Dvillah Group Limited")}">
+      <label>Account number</label><input id="sNum" type="text" inputmode="numeric" value="${esc(s.accountNumber||"")}"></div>
+      <div class="card"><b>🙂 Admin avatar in chats</b><div class="row" style="margin-top:10px"><label class="between" style="margin:0"><span class="av" id="avM">${avatar("m")}</span><input type="radio" name="av" value="m" style="width:auto" ${s.adminAvatar!=="f"?"checked":""}></label>
+      <label class="between" style="margin:0"><span class="av" id="avF">${avatar("f")}</span><input type="radio" name="av" value="f" style="width:auto" ${s.adminAvatar==="f"?"checked":""}></label></div></div>
+      <button class="btn" id="sSave">Save settings</button>
+      <div class="card" style="margin-top:14px"><b>Admins</b><p class="muted" style="margin:6px 0 0">${ADMINS.map(esc).join("<br>")}</p></div>`;
+  },
+  mount(){
+    $("#sSave").onclick = async () => {
+      try{
+        await setDoc(doc(db,"settings","pay"), {bank:$("#sBank").value.trim(), accountName:$("#sName").value.trim(), accountNumber:$("#sNum").value.trim(), adminAvatar:($("input[name=av]:checked")||{}).value||"m"}, {merge:true});
+        toast("Saved ✅");
+      }catch(e){ toast("Could not save."); }
+    };
+  }
+};
+
+</script></body></html>
