@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.pixelgroup677_cloud.twa",
+    "sha256_cert_fingerprints": ["E8:90:18:FA:6E:EF:04:39:1A:1F:BB:E4:24:2F:88:C2:05:B2:4B:40:B5:1C:B1:43:46:60:30:05:53:C8:0A:CE"]
+  }
+}]
