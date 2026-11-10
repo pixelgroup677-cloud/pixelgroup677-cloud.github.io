@@ -155,6 +155,27 @@ table.sheet{border-collapse:collapse;min-width:640px;width:100%;font-size:14px}
 .pm{font-size:12px;color:var(--muted)}
 .steps li{margin:6px 0}
 
+/* Google-Sheets look */
+.sheetwrap.gs{border-radius:6px;box-shadow:none;border:1px solid #c0c4cc;overflow-x:auto}
+table.sheet.gs{table-layout:fixed;min-width:0;width:100%;font-size:12px;border-collapse:collapse;background:#fff}
+.gs th{background:#f1f3f4;color:#444;font-weight:600;text-align:center;padding:5px 2px;border:1px solid #d3d6db;font-size:11px;letter-spacing:0}
+.gs tr.titles th{background:#fff;color:#111;font-size:12px;text-align:left;padding:6px 4px;font-weight:800;border-bottom:2px solid #c0c4cc}
+.gs th.rn{background:#f1f3f4;color:#666;font-weight:500;font-size:11px}
+.gs td{border:1px solid #d3d6db;padding:0;overflow:hidden}
+.gs td.v{padding:7px 4px;white-space:nowrap;text-overflow:ellipsis}
+.gs td.n{text-align:right}
+.gs td input,.gs td select{border:0;border-radius:0;padding:8px 4px;font-size:12px;background:transparent;width:100%;min-width:0}
+.gs td input:focus,.gs td select:focus{outline:2px solid #1a73e8;outline-offset:-2px;background:#fff}
+.gs tr.newrow td{background:#fffbea}
+.gs tr.tot td,.gs tr.tot th{background:#f8f9fa;font-weight:800;border-top:2px solid #c0c4cc}
+.gs tr.r:active td{background:#e8f0fe}
+
+.gs tr.titles th{font-size:10.5px;padding:6px 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gs td select{padding:8px 0}
+
+.gs tr.titles th{font-size:9.5px;letter-spacing:-.2px}
+.gs td.v{font-size:11.5px}
+
 </style></head><body>
 <div id="v-splash">
   <div class="lg" id="splashLogo"></div>
@@ -972,15 +993,40 @@ function groupOptions(uid, sel){
   const gs = D("groups").filter(g => (g.memberUids||[]).includes(uid));
   return `<option value="">— none —</option>` + gs.map(g => `<option value="${esc(g.id)}" ${g.id===sel?"selected":""}>${esc(g.name)}</option>`).join("");
 }
-function sheetRows(){
+const calc = str => {
+  let t = String(str == null ? "" : str).replace(/,/g, "").replace(/^=/, "").trim();
+  if(t === "") return NaN;
+  if(!/^[\d+\-*/().\s]+$/.test(t)) return NaN;
+  try{ const v = Function('"use strict";return (' + t + ')')(); return isFinite(v) ? Math.round(v*100)/100 : NaN; }catch(e){ return NaN; }
+};
+const parseDate = str => {
+  const m = /^\s*(\d{1,2})[\/.\-](\d{1,2})(?:[\/.\-](\d{2,4}))?\s*$/.exec(str || "");
+  if(!m) return "";
+  let y = m[3] ? Number(m[3]) : new Date().getFullYear(); if(y < 100) y += 2000;
+  const mo = Number(m[2]), d = Number(m[1]);
+  if(mo < 1 || mo > 12 || d < 1 || d > 31) return "";
+  return `${y}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+};
+const shortDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d||""); return m ? `${m[3]}/${m[2]}/${m[1].slice(2)}` : (d||""); };
+S.shDay = "";
+function shownPayments(){
   const q = ($("#shFilter") && $("#shFilter").value.trim().toLowerCase()) || "";
-  const ps = D("payments").slice().sort((a,b) => byNew(a,b)).filter(p => !q || (p.name||"").toLowerCase().includes(q)).slice(0, 150);
-  if(!ps.length) return `<tr><td colspan="6" class="v empty">No entries yet.</td></tr>`;
-  return ps.map(p => `<tr class="r" data-id="${esc(p.id)}"><td class="v">${fdate(p.date)}</td><td class="v">${esc(p.name)}${p.edited?" ✎":""}</td><td class="v">${fmt(p.amount)}</td><td class="v"><b>${fmt(p.tAmount)}</b></td><td class="v">${esc(p.desc)}</td><td class="v">${esc((D("groups").find(g=>g.id===p.groupId)||{}).name||"")}</td></tr>`).join("");
+  let ps = D("payments").slice().sort((a,b) => (a.date||"").localeCompare(b.date||"") || (a.createdAt||0) - (b.createdAt||0));
+  if(S.shDay) ps = ps.filter(p => p.date === S.shDay); else ps = ps.slice(-60);
+  return ps.filter(p => !q || (p.name||"").toLowerCase().includes(q));
+}
+function sheetRows(){
+  const ps = shownPayments();
+  const gname = id => (D("groups").find(g => g.id === id) || {}).name || "";
+  const body = ps.map((p,i) => `<tr class="r" data-id="${esc(p.id)}"><th class="rn">${i+2}</th><td class="v">${shortDate(p.date)}</td><td class="v">${esc(p.name)}${p.edited?" ✎":""}</td><td class="v n">${Math.round(p.amount).toLocaleString("en-US")}</td><td class="v n"><b>${Math.round(p.tAmount).toLocaleString("en-US")}</b></td><td class="v">${esc(p.desc)}</td><td class="v">${esc(gname(p.groupId))}</td></tr>`).join("");
+  const nxt = ps.length + 2;
+  return body + `<tr class="tot"><th class="rn">Σ</th><td class="v" colspan="2">Total (${ps.length})</td><td class="v n">${Math.round(sum(ps.map(p => p.amount))).toLocaleString("en-US")}</td><td class="v n">${Math.round(sum(ps.map(p => p.tAmount))).toLocaleString("en-US")}</td><td class="v" colspan="2"></td></tr>` + (ps.length ? "" : `<tr><td colspan="7" class="v empty">No entries${S.shDay?" for this day":""} yet.</td></tr>`);
 }
 function paintSheetRows(){
   const tb = $("#shRows"); if(!tb) return;
+  const keep = tb.parentElement.parentElement.scrollLeft;
   tb.innerHTML = sheetRows();
+  const nr = $("#shNextNo"); if(nr) nr.textContent = shownPayments().length + 2;
   $$("tr.r", tb).forEach(tr => tr.onclick = () => editModal(D("payments").find(p => p.id === tr.dataset.id)));
 }
 function editModal(p){
@@ -1011,26 +1057,38 @@ function editModal(p){
 PAGES.sheet = {
   title: "Sheet", keys: [],
   render(){
-    return `<div class="sheetwrap"><table class="sheet"><thead><tr>${COLS.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>
-      <tr class="newrow"><td><input id="nDate" type="date"></td><td><input id="nName" type="text" placeholder="Type name…" autocomplete="off"></td>
-      <td><input id="nAmt" type="number" inputmode="numeric" placeholder="0"></td><td><input id="nTot" type="number" inputmode="numeric" placeholder="0"></td>
+    return `<div class="between" style="margin-bottom:10px"><div style="flex:1"><label style="margin:0 0 4px">Show day (blank = latest)</label><input id="shDay" type="text" inputmode="numeric" placeholder="dd/mm/yyyy"></div><div style="flex:1"><label style="margin:0 0 4px">Search name</label><input id="shFilter" type="text" placeholder="Type a name…"></div></div>
+    <div class="sheetwrap gs"><table class="sheet gs"><colgroup><col style="width:24px"><col style="width:19%"><col style="width:20%"><col style="width:14%"><col style="width:15%"><col style="width:17%"><col></colgroup>
+      <thead><tr class="letters"><th></th>${"ABCDEF".split("").map(c => `<th>${c}</th>`).join("")}</tr>
+      <tr class="titles"><th class="rn">1</th>${COLS.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+      <tbody id="shRows"></tbody>
+      <tbody><tr class="newrow"><th class="rn" id="shNextNo">+</th>
+      <td><input id="nDate" type="text" inputmode="numeric" placeholder="dd/mm/yy" autocomplete="off"></td>
+      <td><input id="nName" type="text" placeholder="Name…" autocomplete="off"></td>
+      <td><input id="nAmt" type="text" inputmode="decimal" placeholder="0" autocomplete="off"></td>
+      <td><input id="nTot" type="text" inputmode="decimal" placeholder="0" autocomplete="off"></td>
       <td><select id="nDesc"><option value="">Pick…</option>${Object.keys(SECTIONS).map(s => `<option>${s}</option>`).join("")}</select></td>
-      <td><select id="nGrp" disabled><option value="">—</option></select></td></tr>
-      </tbody><tbody id="shRows"></tbody></table></div>
-      <div class="err" id="nErr"></div>
-      <button class="btn" id="nAdd">➕ Add to sheet</button>
-      <label>Search the sheet</label><input id="shFilter" type="text" placeholder="Type a name…">`;
+      <td><select id="nGrp" disabled><option value="">—</option></select></td></tr></tbody></table></div>
+    <p class="muted" style="margin:8px 2px">💡 Type numbers or sums in the Amount cells, like <b>=2000+3000</b>. Tap a saved row to fix it.</p>
+    <div class="err" id="nErr"></div>
+    <button class="btn" id="nAdd">➕ Add row</button>`;
   },
   mount(){
     const grp = () => { const uid = $("#nName").dataset.uid, on = $("#nDesc").value === "Contribution" && uid; $("#nGrp").disabled = !on; $("#nGrp").innerHTML = on ? groupOptions(uid, "") : '<option value="">—</option>'; };
     attachPicker($("#nName"), verifiedUsers, grp);
     $("#nDesc").onchange = grp;
     $("#shFilter").oninput = paintSheetRows;
+    $("#shDay").oninput = () => { const d = parseDate($("#shDay").value); S.shDay = d; if(d && !$("#nDate").value) $("#nDate").value = shortDate(d); paintSheetRows(); };
+    ["nAmt","nTot"].forEach(id => $("#"+id).addEventListener("blur", () => { const el = $("#"+id), v = calc(el.value); if(!isNaN(v) && el.value.trim() !== "") el.value = String(v); }));
+    // Enter moves to the next cell, last cell adds the row
+    const order = ["nDate","nName","nAmt","nTot","nDesc","nGrp"];
+    order.forEach((id, i) => $("#"+id).addEventListener("keydown", e => { if(e.key !== "Enter") return; e.preventDefault(); const nx = order.slice(i+1).map(x => $("#"+x)).find(x => x && !x.disabled); if(nx) nx.focus(); else $("#nAdd").click(); }));
     $("#nAdd").onclick = async () => {
       const err = $("#nErr"); err.textContent = "";
-      const uid = $("#nName").dataset.uid, u = userBy(uid), date = $("#nDate").value, amount = num($("#nAmt").value);
-      const tAmount = $("#nTot").value === "" ? amount : num($("#nTot").value), desc = $("#nDesc").value;
-      if(!date){ err.textContent = "Type the date."; return; }
+      ["nAmt","nTot"].forEach(id => { const el = $("#"+id), v = calc(el.value); if(!isNaN(v)) el.value = String(v); });
+      const uid = $("#nName").dataset.uid, u = userBy(uid), date = parseDate($("#nDate").value), amount = num($("#nAmt").value);
+      const tAmount = $("#nTot").value.trim() === "" ? amount : num($("#nTot").value), desc = $("#nDesc").value;
+      if(!date){ err.textContent = "Type the date like 10/11/2026."; return; }
       if(!u){ err.textContent = "Pick the member from the name list."; return; }
       if(!(tAmount > 0)){ err.textContent = "Type the amount."; return; }
       if(!desc){ err.textContent = "Pick Food, Savings or Contribution."; return; }
@@ -1038,7 +1096,7 @@ PAGES.sheet = {
       try{
         await savePayment({date, uid, name:u.name, shortId:u.shortId, amount: amount || tAmount, tAmount, desc, groupId: desc==="Contribution" ? $("#nGrp").value : "", by:me_(), createdAt:Date.now()});
         ["nName","nAmt","nTot"].forEach(i => { $("#"+i).value = ""; }); $("#nName").dataset.uid = ""; $("#nDesc").value = ""; grp();
-        toast("Added ✅");
+        toast("Added ✅"); $("#nName").focus();
       }catch(e){ err.textContent = "Could not save. Try again."; }
       $("#nAdd").disabled = false;
     };
