@@ -143,7 +143,7 @@ table.sheet{border-collapse:collapse;min-width:640px;width:100%;font-size:14px}
 .sheet td input,.sheet td select{border:0;border-radius:0;padding:10px 8px;font-size:14px;background:transparent}
 .sheet tr.newrow td{background:#fff7e0}
 .sheet tr.r:active{background:#fdeeee}
-.pick{position:fixed;z-index:60;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(10,12,30,.3);max-height:230px;overflow-y:auto}
+.pick{position:fixed;z-index:200;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(10,12,30,.3);max-height:230px;overflow-y:auto}
 .pick div{padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}.pick small{color:var(--muted)}
 /* modal, toast */
 .modal{position:fixed;inset:0;background:rgba(10,12,30,.55);z-index:70;display:flex;align-items:flex-end;justify-content:center}
@@ -372,13 +372,17 @@ function attachPicker(input, getItems, onPick){
   const hide = () => { if(box){ box.remove(); box = null; } };
   const show = () => {
     const q = input.value.trim().toLowerCase();
-    const items = getItems().filter(u => !q || (u.name||"").toLowerCase().includes(q) || (u.shortId||"").toLowerCase().includes(q)).slice(0, 30);
+    const toks = q.split(/\s+/).filter(Boolean);
+    const items = getItems().filter(u => { const h = ((u.name||"") + " " + (u.shortId||"")).toLowerCase(); return toks.every(t => h.includes(t)); }).slice(0, 30);
     hide();
     if(!items.length) return;
     box = document.createElement("div");
     box.className = "pick";
     const r = input.getBoundingClientRect();
-    box.style.left = r.left + "px"; box.style.top = (r.bottom + 4) + "px"; box.style.width = Math.max(r.width, 220) + "px";
+    const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight), below = vh - r.bottom;
+    box.style.left = r.left + "px"; box.style.width = Math.max(r.width, 220) + "px";
+    if(below < 200 && r.top > below){ box.style.bottom = (window.innerHeight - r.top + 4) + "px"; box.style.maxHeight = Math.min(230, r.top - 10) + "px"; }
+    else { box.style.top = (r.bottom + 4) + "px"; box.style.maxHeight = Math.max(120, Math.min(230, below - 10)) + "px"; }
     box.innerHTML = items.map(u => `<div data-u="${esc(u.uid)}">${esc(u.name)} <small>${esc(u.shortId)}</small></div>`).join("");
     box.addEventListener("pointerdown", e => {
       e.preventDefault();
